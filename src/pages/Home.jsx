@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, ArrowRight, Activity, Database, CheckCircle, TrendingUp } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { API_BASE_URL } from '../config';
 
 function DonutChart({ statusCounts, total }) {
-  const [hoveredStatus, setHoveredStatus] = useState(null);
-  const statuses = Object.entries(statusCounts);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const colors = {
     PELAPORAN: '#d97706',
     PENYIDIKAN: '#0284c7',
@@ -25,103 +25,113 @@ function DonutChart({ statusCounts, total }) {
     }
   };
 
-  let accumulatedPercentage = 0;
-  const radius = 38;
-  const circumference = 2 * Math.PI * radius; // ~238.76
+  const rawData = Object.entries(statusCounts).map(([status, count]) => ({
+    name: status,
+    value: count,
+    label: getStatusLabel(status),
+    color: colors[status] || '#999'
+  })).filter(item => item.value > 0);
 
-  if (total === 0) {
+  if (total === 0 || rawData.length === 0) {
     return (
-      <div className="donut-chart-wrapper">
-        <svg width="140" height="140" viewBox="0 0 100 100" className="donut-chart-svg">
-          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#e5e7eb" strokeWidth="8" />
-          <text x="50" y="54" textAnchor="middle" fill="var(--color-graphite)" fontSize="10" fontWeight="600">Kosong</text>
-        </svg>
+      <div className="donut-chart-wrapper flex-center" style={{ height: '140px' }}>
+        <p style={{ color: 'var(--color-graphite)', fontSize: '13px', fontWeight: '500' }}>Belum ada data tahapan</p>
       </div>
     );
   }
 
+  const activeItem = activeIndex !== -1 ? rawData[activeIndex] : null;
+
   return (
     <div className="donut-chart-wrapper">
-      <svg width="140" height="140" viewBox="0 0 100 100" className="donut-chart-svg">
-        <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#f3f4f6" strokeWidth="8" />
-        {statuses.map(([status, count]) => {
-          const percentage = count / total;
-          if (percentage === 0) return null;
-          
-          const strokeLength = percentage * circumference;
-          const strokeOffset = circumference - (accumulatedPercentage * circumference);
-          accumulatedPercentage += percentage;
+      <div className="recharts-container-box" style={{ width: '140px', height: '140px', position: 'relative' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={rawData}
+              cx="50%"
+              cy="50%"
+              innerRadius={34}
+              outerRadius={42}
+              paddingAngle={2}
+              dataKey="value"
+              onMouseEnter={(_, index) => setActiveIndex(index)}
+              onMouseLeave={() => setActiveIndex(-1)}
+              stroke="none"
+              cursor="pointer"
+            >
+              {rawData.map((entry, index) => {
+                const isHovered = activeIndex === index;
+                const isAnyHovered = activeIndex !== -1;
+                return (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.color} 
+                    style={{
+                      transition: 'opacity 0.2s ease, transform 0.2s ease',
+                      opacity: isAnyHovered ? (isHovered ? 1 : 0.35) : 1,
+                      transform: isHovered ? 'scale(1.04)' : 'scale(1)',
+                      transformOrigin: 'center'
+                    }}
+                  />
+                );
+              })}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
 
-          const isHovered = hoveredStatus === status;
-          const isAnyHovered = hoveredStatus !== null;
-
-          return (
-            <circle
-              key={status}
-              cx="50"
-              cy="50"
-              r={radius}
-              fill="transparent"
-              stroke={colors[status] || 'var(--color-rust)'}
-              strokeWidth={isHovered ? 11 : 8}
-              strokeDasharray={`${strokeLength} ${circumference}`}
-              strokeDashoffset={-strokeOffset}
-              className="donut-segment"
-              onMouseEnter={() => setHoveredStatus(status)}
-              onMouseLeave={() => setHoveredStatus(null)}
-              style={{
-                transition: 'stroke-width 0.2s ease, opacity 0.2s ease',
-                transformOrigin: '50px 50px',
-                transform: 'rotate(-90deg)',
-                cursor: 'pointer',
-                opacity: isAnyHovered ? (isHovered ? 1 : 0.35) : 1,
-              }}
-            />
-          );
-        })}
-        <g className="donut-center-text" style={{ pointerEvents: 'none' }}>
-          {hoveredStatus ? (
-            <>
-              <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="17" fontWeight="700">
-                {statusCounts[hoveredStatus]}
-              </text>
-              <text x="50" y="60" textAnchor="middle" fill={colors[hoveredStatus]} fontSize="6" fontWeight="700" letterSpacing="0.1px">
-                {getStatusLabel(hoveredStatus).toUpperCase()}
-              </text>
-            </>
-          ) : (
-            <>
-              <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="17" fontWeight="700">
-                {total}
-              </text>
-              <text x="50" y="60" textAnchor="middle" fill="var(--color-graphite)" fontSize="6" fontWeight="600" letterSpacing="0.1px">
-                TOTAL KASUS
-              </text>
-            </>
-          )}
-        </g>
-      </svg>
+        {/* Center Text Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          pointerEvents: 'none'
+        }}>
+          <p style={{
+            fontSize: '17px',
+            fontWeight: '700',
+            color: 'var(--color-ink)',
+            margin: 0,
+            lineHeight: 1
+          }}>
+            {activeItem ? activeItem.value : total}
+          </p>
+          <p style={{
+            fontSize: '6px',
+            fontWeight: '700',
+            color: activeItem ? activeItem.color : 'var(--color-graphite)',
+            margin: '4px 0 0 0',
+            letterSpacing: '0.1px',
+            lineHeight: 1,
+            textTransform: 'uppercase'
+          }}>
+            {activeItem ? activeItem.label : 'TOTAL KASUS'}
+          </p>
+        </div>
+      </div>
       
       <div className="donut-legend">
-        {statuses.map(([status, count]) => {
-          const isHovered = hoveredStatus === status;
+        {rawData.map((entry, index) => {
+          const isHovered = activeIndex === index;
           return (
             <div 
-              key={status} 
+              key={entry.name} 
               className={`legend-item ${isHovered ? 'hovered' : ''}`}
-              onMouseEnter={() => setHoveredStatus(status)}
-              onMouseLeave={() => setHoveredStatus(null)}
+              onMouseEnter={() => setActiveIndex(index)}
+              onMouseLeave={() => setActiveIndex(-1)}
               style={{
                 cursor: 'pointer',
-                opacity: hoveredStatus !== null && !isHovered ? 0.4 : 1,
+                opacity: activeIndex !== -1 && !isHovered ? 0.4 : 1,
                 transition: 'opacity 0.2s ease',
               }}
             >
-              <span className="legend-dot" style={{ backgroundColor: colors[status] }}></span>
+              <span className="legend-dot" style={{ backgroundColor: entry.color }}></span>
               <span className="legend-label" style={{ fontWeight: isHovered ? '600' : '400' }}>
-                {getStatusLabel(status)}
+                {entry.label}
               </span>
-              <span className="legend-count">{count}</span>
+              <span className="legend-count">{entry.value}</span>
             </div>
           );
         })}
