@@ -43,6 +43,9 @@ function Admin({ user, apiFetch, showToast }) {
   const [stagesOfSelectedCase, setStagesOfSelectedCase] = useState([]);
   const [editingStage, setEditingStage] = useState(null);
 
+  const [showAddCaseModal, setShowAddCaseModal] = useState(false);
+  const [showAddStageModal, setShowAddStageModal] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [activeTab]);
@@ -140,6 +143,7 @@ function Admin({ user, apiFetch, showToast }) {
           setTitle('');
           setDescription('');
           setCategoryId('');
+          setShowAddCaseModal(false);
           loadData();
         } else {
           throw new Error(res.message);
@@ -542,337 +546,75 @@ function Admin({ user, apiFetch, showToast }) {
             {/* CASES TAB */}
             {activeTab === 'cases' && (
               <div className="cases-tab">
-                <div className="grid-2-col">
-                  {/* Left Column: Create Case */}
-                  <div className="form-card card-shadow">
-                    <h3>Tambah Perkara Baru</h3>
-                    <form onSubmit={handleCreateCase} className="mt-4">
-                      <div className="form-group">
-                        <label className="form-label">Nomor Perkara</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Misal: 120/Pid.B/2026/PN.Jkt"
-                          value={caseNumber}
-                          onChange={(e) => setCaseNumber(e.target.value)}
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Judul Kasus</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Misal: Kasus Dugaan Suap Pengadaan Bansos"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Klasifikasi / Kategori</label>
-                        <select
-                          required
-                          value={categoryId}
-                          onChange={(e) => setCategoryId(e.target.value)}
-                          className="form-input"
-                        >
-                          <option value="">-- Pilih Kategori --</option>
-                          {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
-                              {cat.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Status Awal</label>
-                        <select
-                          value={currentStatus}
-                          onChange={(e) => setCurrentStatus(e.target.value)}
-                          className="form-input"
-                        >
-                          <option value="PELAPORAN">Pelaporan</option>
-                          <option value="PENYIDIKAN">Penyidikan</option>
-                          <option value="PENUNTUTAN">Penuntutan</option>
-                          <option value="PERSIDANGAN">Persidangan</option>
-                          <option value="PUTUSAN">Putusan</option>
-                        </select>
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Deskripsi Kasus</label>
-                        <textarea
-                          required
-                          rows={4}
-                          placeholder="Uraikan ringkasan kasus hukum secara objektif..."
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          className="form-input"
-                        ></textarea>
-                      </div>
-                      <button type="submit" className="btn-primary w-full mt-4">
-                        Buat Kasus
-                      </button>
-                    </form>
-                  </div>
-
-                  {/* Right Column: Manage Stage Timeline */}
-                  <div className="form-card card-shadow">
-                    <h3>{editingStage ? 'Edit Tahapan Timeline & Artikel' : 'Tambah Tahapan Timeline & Artikel'}</h3>
-                    <form onSubmit={handleCreateOrUpdateStage} className="mt-4">
-                      <div className="form-group">
-                        <label className="form-label">Pilih Kasus</label>
-                        <select
-                          required
-                          value={selectedCaseForStage}
-                          onChange={(e) => handleCaseChangeForStage(e.target.value)}
-                          className="form-input"
-                          disabled={!!editingStage}
-                        >
-                          <option value="">-- Pilih Kasus --</option>
-                          {cases.map((c) => (
-                            <option key={c.id} value={c.id}>
-                              {c.caseNumber} - {c.title}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="grid-2-col">
-                        <div className="form-group">
-                          <label className="form-label">Jenis Tahapan</label>
-                          <select
-                            value={stageType}
-                            onChange={(e) => setStageType(e.target.value)}
-                            className="form-input"
-                          >
-                            <option value="PELAPORAN">Pelaporan</option>
-                            <option value="PENYIDIKAN">Penyidikan</option>
-                            <option value="PENUNTUTAN">Penuntutan</option>
-                            <option value="PERSIDANGAN">Persidangan</option>
-                            <option value="PUTUSAN">Putusan</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label className="form-label">Status</label>
-                          <select
-                            value={stageStatus}
-                            onChange={(e) => setStageStatus(e.target.value)}
-                            className="form-input"
-                          >
-                            <option value="AKTIF">Aktif</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="SELESAI">Selesai</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Tanggal Mulai Tahap</label>
-                        <input
-                          type="date"
-                          value={stageStartedAt}
-                          onChange={(e) => setStageStartedAt(e.target.value)}
-                          className="form-input"
-                        />
-                      </div>
-                      <hr className="divider mt-4 mb-4" />
-                      <h4>Artikel Penjelasan (Opsional)</h4>
-                      <div className="form-group mt-2">
-                        <label className="form-label">Judul Artikel</label>
-                        <input
-                          type="text"
-                          placeholder="Misal: Berkas Perkara Dinyatakan Lengkap"
-                          value={articleTitle}
-                          onChange={(e) => setArticleTitle(e.target.value)}
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Isi Detail Penjelasan</label>
-                        <textarea
-                          rows={4}
-                          placeholder="Tulis kronologi lengkap atau ringkasan penting hukum pada tahap ini..."
-                          value={articleContent}
-                          onChange={(e) => setArticleContent(e.target.value)}
-                          className="form-input"
-                        ></textarea>
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Link Lampiran Dokumen (Pisahkan koma jika banyak)</label>
-                        <input
-                          type="text"
-                          placeholder="https://drive.google.com/doc-1, https://situs-berita.com/laporan"
-                          value={articleAttachments}
-                          onChange={(e) => setArticleAttachments(e.target.value)}
-                          className="form-input"
-                        />
-                      </div>
-                      {editingStage ? (
-                        <div style={{ display: 'flex', gap: '12px' }} className="mt-4">
-                          <button type="submit" className="btn-primary w-full">
-                            Simpan Perubahan
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingStage(null);
-                              setStageType('PELAPORAN');
-                              setStageStatus('AKTIF');
-                              setStageStartedAt('');
-                              setArticleTitle('');
-                              setArticleContent('');
-                              setArticleAttachments('');
-                            }}
-                            className="btn-secondary w-full"
-                          >
-                            Batal Edit
-                          </button>
-                        </div>
-                      ) : (
-                        <button type="submit" className="btn-primary w-full mt-4">
-                          Tambah Tahap & Artikel
-                        </button>
-                      )}
-                    </form>
-
-                    {selectedCaseForStage && (
-                      <div className="stages-list-section mt-6" style={{ borderTop: '1px solid var(--color-fog)', paddingTop: '20px' }}>
-                        <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-ink)' }}>Daftar Tahapan Saat Ini ({stagesOfSelectedCase.length})</h4>
-                        {stagesOfSelectedCase.length === 0 ? (
-                          <p style={{ fontSize: '13px', color: 'var(--color-ash)', marginTop: '8px' }}>Belum ada tahapan pada perkara ini.</p>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
-                            {stagesOfSelectedCase.map((st) => (
-                              <div
-                                key={st.id}
-                                style={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'center',
-                                  backgroundColor: 'var(--surface-fog)',
-                                  padding: '12px 16px',
-                                  borderRadius: '12px',
-                                  border: '1px solid var(--color-fog)'
-                                }}
-                              >
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-ink)' }}>{st.stageType}</span>
-                                    <span
-                                      style={{
-                                        fontSize: '10px',
-                                        fontWeight: '700',
-                                        marginLeft: '8px',
-                                        padding: '2px 6px',
-                                        borderRadius: '4px',
-                                        backgroundColor: st.status === 'SELESAI' ? '#dcfce7' : st.status === 'AKTIF' ? '#e0f2fe' : '#fef3c7',
-                                        color: st.status === 'SELESAI' ? '#15803d' : st.status === 'AKTIF' ? '#0369a1' : '#b45309'
-                                      }}
-                                    >
-                                      {st.status}
-                                    </span>
-                                  </div>
-                                  {st.article && (
-                                    <div style={{ fontSize: '11px', color: 'var(--color-graphite)', marginTop: '2px' }}>
-                                      Artikel: {st.article.title}
-                                    </div>
-                                  )}
-                                </div>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleEditStageClick(st)}
-                                    style={{
-                                      backgroundColor: '#eff6ff',
-                                      color: '#2563eb',
-                                      border: 'none',
-                                      padding: '6px 12px',
-                                      borderRadius: '8px',
-                                      fontSize: '11px',
-                                      fontWeight: '600',
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeleteStage(st.id)}
-                                    style={{
-                                      backgroundColor: '#fee2e2',
-                                      color: '#ef4444',
-                                      border: 'none',
-                                      padding: '6px 12px',
-                                      borderRadius: '8px',
-                                      fontSize: '11px',
-                                      fontWeight: '600',
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    Hapus
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '650', color: 'var(--color-ink)', margin: 0 }}>Daftar Seluruh Kasus ({cases.length})</h3>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button 
+                      onClick={() => setShowAddCaseModal(true)} 
+                      className="btn-primary"
+                      style={{ padding: '10px 18px', fontSize: '13px', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <Plus size={16} /> Tambah Perkara
+                    </button>
+                    <button 
+                      onClick={() => setShowAddStageModal(true)} 
+                      className="btn-secondary"
+                      style={{ padding: '10px 18px', fontSize: '13px', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid var(--color-dove)' }}
+                    >
+                      <Plus size={16} /> Tambah/Kelola Tahapan
+                    </button>
                   </div>
                 </div>
 
-                {/* Cases List under */}
-                <div className="cases-list-section-admin mt-8">
-                  <h3>Daftar Seluruh Kasus ({cases.length})</h3>
-                  <div className="cases-table-card card-shadow mt-4">
-                    <div className="cases-table-wrapper">
-                      <table className="cases-table">
-                        <thead>
-                          <tr>
-                            <th>Nomor Perkara / Judul</th>
-                            <th>Status Saat Ini</th>
-                            <th>Aksi</th>
+                <div className="cases-table-card card-shadow">
+                  <div className="cases-table-wrapper">
+                    <table className="cases-table">
+                      <thead>
+                        <tr>
+                          <th>Nomor Perkara / Judul</th>
+                          <th>Status Saat Ini</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cases.map((c) => (
+                          <tr key={c.id}>
+                            <td>
+                              <strong>{c.caseNumber}</strong> - {c.title}
+                            </td>
+                            <td>{c.currentStatus}</td>
+                            <td>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => handleEditCaseClick(c)}
+                                  className="btn-edit-case flex-center"
+                                  style={{
+                                    display: 'inline-flex',
+                                    backgroundColor: '#eff6ff',
+                                    color: '#2563eb',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    borderRadius: '8px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    gap: '4px'
+                                  }}
+                                >
+                                  <Edit3 size={14} /> Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCase(c.id)}
+                                  className="btn-delete-case flex-center"
+                                >
+                                  <Trash2 size={14} /> Nonaktifkan
+                                </button>
+                              </div>
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {cases.map((c) => (
-                            <tr key={c.id}>
-                              <td>
-                                <strong>{c.caseNumber}</strong> - {c.title}
-                              </td>
-                              <td>{c.currentStatus}</td>
-                              <td>
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                  <button
-                                    onClick={() => handleEditCaseClick(c)}
-                                    className="btn-edit-case flex-center"
-                                    style={{
-                                      display: 'inline-flex',
-                                      backgroundColor: '#eff6ff',
-                                      color: '#2563eb',
-                                      border: 'none',
-                                      padding: '6px 12px',
-                                      borderRadius: '8px',
-                                      fontSize: '12px',
-                                      fontWeight: '600',
-                                      cursor: 'pointer',
-                                      gap: '4px'
-                                    }}
-                                  >
-                                    <Edit3 size={14} /> Edit
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteCase(c.id)}
-                                    className="btn-delete-case flex-center"
-                                  >
-                                    <Trash2 size={14} /> Nonaktifkan
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -1028,6 +770,314 @@ function Admin({ user, apiFetch, showToast }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Case Modal */}
+      {showAddCaseModal && (
+        <div className="modal-overlay flex-center">
+          <div className="modal-content card-shadow" style={{ maxWidth: '580px', width: '95%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0 }}>Tambah Perkara Baru</h3>
+              <button 
+                onClick={() => setShowAddCaseModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-graphite)' }}
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateCase}>
+              <div className="form-group">
+                <label className="form-label">Nomor Perkara</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Misal: 120/Pid.B/2026/PN.Jkt"
+                  value={caseNumber}
+                  onChange={(e) => setCaseNumber(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Judul Kasus</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Misal: Kasus Dugaan Suap Pengadaan Bansos"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Klasifikasi / Kategori</label>
+                <select
+                  required
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="">-- Pilih Kategori --</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Status Awal</label>
+                <select
+                  value={currentStatus}
+                  onChange={(e) => setCurrentStatus(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="PELAPORAN">Pelaporan</option>
+                  <option value="PENYIDIKAN">Penyidikan</option>
+                  <option value="PENUNTUTAN">Penuntutan</option>
+                  <option value="PERSIDANGAN">Persidangan</option>
+                  <option value="PUTUSAN">Putusan</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Deskripsi Kasus</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Uraikan ringkasan kasus hukum secara objektif..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="form-input"
+                ></textarea>
+              </div>
+              <div className="modal-actions mt-6">
+                <button type="submit" className="btn-primary">
+                  Buat Kasus
+                </button>
+                <button type="button" onClick={() => setShowAddCaseModal(false)} className="btn-secondary">
+                  Batal
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Manage Stage Modal */}
+      {showAddStageModal && (
+        <div className="modal-overlay flex-center">
+          <div className="modal-content card-shadow" style={{ maxWidth: '640px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0 }}>{editingStage ? 'Edit Tahapan Timeline & Artikel' : 'Tambah/Kelola Tahapan Timeline'}</h3>
+              <button 
+                onClick={() => {
+                  setShowAddStageModal(false);
+                  setEditingStage(null);
+                  setSelectedCaseForStage('');
+                  setStagesOfSelectedCase([]);
+                }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-graphite)' }}
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateOrUpdateStage}>
+              <div className="form-group">
+                <label className="form-label">Pilih Kasus</label>
+                <select
+                  required
+                  value={selectedCaseForStage}
+                  onChange={(e) => handleCaseChangeForStage(e.target.value)}
+                  className="form-input"
+                  disabled={!!editingStage}
+                >
+                  <option value="">-- Pilih Kasus --</option>
+                  {cases.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.caseNumber} - {c.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid-2-col">
+                <div className="form-group">
+                  <label className="form-label">Jenis Tahapan</label>
+                  <select
+                    value={stageType}
+                    onChange={(e) => setStageType(e.target.value)}
+                    className="form-input"
+                  >
+                    <option value="PELAPORAN">Pelaporan</option>
+                    <option value="PENYIDIKAN">Penyidikan</option>
+                    <option value="PENUNTUTAN">Penuntutan</option>
+                    <option value="PERSIDANGAN">Persidangan</option>
+                    <option value="PUTUSAN">Putusan</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Status</label>
+                  <select
+                    value={stageStatus}
+                    onChange={(e) => setStageStatus(e.target.value)}
+                    className="form-input"
+                  >
+                    <option value="AKTIF">Aktif</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="SELESAI">Selesai</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tanggal Mulai Tahap</label>
+                <input
+                  type="date"
+                  value={stageStartedAt}
+                  onChange={(e) => setStageStartedAt(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <hr className="divider mt-4 mb-4" />
+              <h4>Artikel Penjelasan (Opsional)</h4>
+              <div className="form-group mt-2">
+                <label className="form-label">Judul Artikel</label>
+                <input
+                  type="text"
+                  placeholder="Misal: Berkas Perkara Dinyatakan Lengkap"
+                  value={articleTitle}
+                  onChange={(e) => setArticleTitle(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Isi Detail Penjelasan</label>
+                <textarea
+                  rows={4}
+                  placeholder="Tulis kronologi lengkap atau ringkasan penting hukum pada tahap ini..."
+                  value={articleContent}
+                  onChange={(e) => setArticleContent(e.target.value)}
+                  className="form-input"
+                ></textarea>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Link Lampiran Dokumen (Pisahkan koma jika banyak)</label>
+                <input
+                  type="text"
+                  placeholder="https://drive.google.com/doc-1, https://situs-berita.com/laporan"
+                  value={articleAttachments}
+                  onChange={(e) => setArticleAttachments(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px' }} className="mt-4">
+                <button type="submit" disabled={!selectedCaseForStage} className="btn-primary w-full">
+                  {editingStage ? 'Simpan Perubahan' : 'Tambah Tahap & Artikel'}
+                </button>
+                {editingStage && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingStage(null);
+                      setStageType('PELAPORAN');
+                      setStageStatus('AKTIF');
+                      setStageStartedAt('');
+                      setArticleTitle('');
+                      setArticleContent('');
+                      setArticleAttachments('');
+                    }}
+                    className="btn-secondary w-full"
+                  >
+                    Batal Edit
+                  </button>
+                )}
+              </div>
+            </form>
+
+            {selectedCaseForStage && (
+              <div className="stages-list-section mt-6" style={{ borderTop: '1px solid var(--color-fog)', paddingTop: '20px' }}>
+                <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-ink)' }}>Daftar Tahapan Saat Ini ({stagesOfSelectedCase.length})</h4>
+                {stagesOfSelectedCase.length === 0 ? (
+                  <p style={{ fontSize: '13px', color: 'var(--color-ash)', marginTop: '8px' }}>Belum ada tahapan pada perkara ini.</p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                    {stagesOfSelectedCase.map((st) => (
+                      <div
+                        key={st.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          backgroundColor: 'var(--surface-fog)',
+                          padding: '12px 16px',
+                          borderRadius: '12px',
+                          border: '1px solid var(--color-fog)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start' }}>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-ink)' }}>{st.stageType}</span>
+                            <span
+                              style={{
+                                fontSize: '10px',
+                                fontWeight: '700',
+                                marginLeft: '8px',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                backgroundColor: st.status === 'SELESAI' ? '#dcfce7' : st.status === 'AKTIF' ? '#e0f2fe' : '#fef3c7',
+                                color: st.status === 'SELESAI' ? '#15803d' : st.status === 'AKTIF' ? '#0369a1' : '#b45309'
+                              }}
+                            >
+                              {st.status}
+                            </span>
+                          </div>
+                          {st.article && (
+                            <div style={{ fontSize: '11px', color: 'var(--color-graphite)', marginTop: '2px' }}>
+                              Artikel: {st.article.title}
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleEditStageClick(st)}
+                            style={{
+                              backgroundColor: '#eff6ff',
+                              color: '#2563eb',
+                              border: 'none',
+                              padding: '6px 12px',
+                              borderRadius: '8px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStage(st.id)}
+                            style={{
+                              backgroundColor: '#fee2e2',
+                              color: '#ef4444',
+                              border: 'none',
+                              padding: '6px 12px',
+                              borderRadius: '8px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Hapus
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
