@@ -425,14 +425,14 @@
 }
 
 /* Global Cases Table & Cards */
-.cases-list-card, .cases-table-card {
+.cases-list-card, .cases-table-card, .logs-list-card {
   background-color: var(--color-pure-white);
   border-radius: var(--radius-cards); /* 24px */
   overflow: hidden;
   border: 1px solid var(--color-fog);
 }
 
-.cases-table-wrapper {
+.cases-table-wrapper, .logs-table-wrapper {
   overflow-x: auto;
 }
 
