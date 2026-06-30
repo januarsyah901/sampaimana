@@ -47,8 +47,8 @@ function Explore({ apiFetch, showToast }) {
       })
       .then((res) => {
         if (res.success) {
-          setCases(res.data.cases);
-          setTotalCases(res.data.pagination.total);
+          setCases(res.data || []);
+          setTotalCases(res.meta ? res.meta.total : 0);
         } else {
           throw new Error(res.message);
         }
