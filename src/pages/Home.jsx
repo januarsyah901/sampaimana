@@ -364,7 +364,7 @@ function Home({ apiFetch, showToast }) {
           transform: translateX(4px);
         }
         .stats-section {
-          margin: 40px 0 48px;
+          margin: 40px auto 48px;
         }
         .stats-grid {
           display: grid;
