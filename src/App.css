@@ -51,25 +51,50 @@
   cursor: not-allowed;
 }
 
-/* Secondary Link Button */
+/* Secondary Button (Pill Shape with Border) */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  background-color: var(--color-fog);
   color: var(--color-ink);
   font-family: var(--font-sohne);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  border: none;
-  background: none;
+  padding: 8px 18px;
+  border-radius: var(--radius-buttons); /* 9999px */
+  border: 1px solid var(--color-dove);
   cursor: pointer;
   letter-spacing: -0.009em;
   text-decoration: none;
-  transition: opacity 0.2s ease;
-  padding: 10px 16px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 .btn-secondary:hover {
-  opacity: 0.7;
+  background-color: var(--color-dove);
+  border-color: var(--color-graphite);
+}
+
+/* Explore Case Action Button (Global Style) */
+.btn-explore-case {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-fog);
+  color: var(--color-ink);
+  font-family: var(--font-sohne);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-buttons); /* 9999px */
+  border: 1px solid var(--color-dove);
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-explore-case:hover {
+  background-color: var(--color-dove);
+  border-color: var(--color-graphite);
 }
 
 /* Tag style */

@@ -603,21 +603,7 @@ function Home() {
           font-weight: 500;
           color: var(--color-ash);
         }
-        .btn-explore-case {
-          display: inline-flex;
-          align-items: center;
-          background-color: var(--surface-fog);
-          color: var(--color-ink);
-          text-decoration: none;
-          font-size: 13px;
-          font-weight: 500;
-          padding: 6px 14px;
-          border-radius: 8px;
-          transition: background 0.2s;
-        }
-        .btn-explore-case:hover {
-          background-color: var(--color-dove);
-        }
+
         .loading-container, .error-container {
           min-height: 400px;
         }
