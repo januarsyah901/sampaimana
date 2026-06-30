@@ -288,35 +288,19 @@ function Home({ apiFetch, showToast }) {
           </div>
         ) : (
           <div className="stats-grid">
-            <div className="stat-card card-shadow">
-              <div className="stat-icon-wrapper flex-center">
-                <Database size={20} className="stat-icon" />
-              </div>
+            <div className="stat-card">
               <p className="stat-value">{stats.totals.cases}</p>
               <p className="stat-label">Total Kasus Hukum</p>
-              <div className="stat-delta positive">
-                <TrendingUp size={12} /> +12% minggu ini
-              </div>
             </div>
-            <div className="stat-card card-shadow">
-              <div className="stat-icon-wrapper flex-center">
-                <Activity size={20} className="stat-icon" />
-              </div>
+            <div className="stat-card">
               <p className="stat-value">{stats.totals.activeCases}</p>
               <p className="stat-label">Kasus Aktif Dipantau</p>
-              <div className="stat-delta positive">
-                <CheckCircle size={12} /> Real-time tracking
-              </div>
             </div>
-            <div className="stat-card card-shadow highlight-card-warm">
-              <div className="stat-icon-wrapper flex-center" style={{ backgroundColor: 'var(--color-rust)', color: 'white' }}>
-                <FileText size={20} />
-              </div>
-              <p className="stat-value" style={{ color: 'var(--color-rust)' }}>
+            <div className="stat-card">
+              <p className="stat-value">
                 {Object.values(stats.byStatus).reduce((a, b) => a + b, 0)}
               </p>
               <p className="stat-label">Total Tahapan Terverifikasi</p>
-              <p className="stat-subtext">Diajukan & dimoderasi oleh publik</p>
             </div>
           </div>
         )}
@@ -390,10 +374,11 @@ function Home({ apiFetch, showToast }) {
         .stat-card {
           background-color: var(--surface-card);
           border-radius: var(--radius-cards);
-          padding: var(--card-padding);
+          padding: 20px 24px;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           text-align: center;
           position: relative;
           border: 1px solid var(--color-fog);
@@ -402,21 +387,6 @@ function Home({ apiFetch, showToast }) {
         }
         .stat-card:hover {
           border-color: var(--color-ink);
-        }
-        .highlight-card-warm {
-          background-color: var(--color-apricot-wash);
-          border: 1px solid var(--color-rust);
-        }
-        .stat-icon-wrapper {
-          width: 40px;
-          height: 40px;
-          border-radius: var(--radius-avatars);
-          background-color: var(--surface-fog);
-          color: var(--color-graphite);
-          margin-bottom: var(--spacing-12);
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
         .stat-value {
           font-size: 38px;
@@ -431,26 +401,6 @@ function Home({ apiFetch, showToast }) {
           color: var(--color-graphite);
           font-weight: 600;
           letter-spacing: -0.01em;
-        }
-        .stat-delta {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          font-size: 11px;
-          font-weight: 500;
-          margin-top: 10px;
-          width: 100%;
-        }
-        .stat-delta.positive {
-          color: #10b981;
-        }
-        .stat-subtext {
-          font-size: 11px;
-          color: var(--color-ash);
-          margin-top: 10px;
-          text-align: center;
-          width: 100%;
         }
         .dashboard-grid {
           display: flex;
