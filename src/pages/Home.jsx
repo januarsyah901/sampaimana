@@ -540,54 +540,7 @@ function Home({ apiFetch, showToast }) {
           justify-content: space-between;
           margin-bottom: var(--spacing-16);
         }
-        .cases-list-card {
-          background-color: var(--color-pure-white);
-          border-radius: var(--radius-cards);
-          overflow: hidden;
-        }
-        .cases-table-wrapper {
-          overflow-x: auto;
-        }
-        .cases-table {
-          width: 100%;
-          border-collapse: collapse;
-          text-align: left;
-        }
-        .cases-table th {
-          background-color: var(--surface-fog);
-          padding: 14px 20px;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--color-graphite);
-          border-bottom: 1px solid var(--color-dove);
-        }
-        .cases-table td {
-          padding: 16px 20px;
-          border-bottom: 1px solid var(--color-fog);
-          font-size: 14px;
-        }
-        .cases-table tr:last-child td {
-          border-bottom: none;
-        }
-        .case-title-block {
-          display: flex;
-          flex-direction: column;
-        }
-        .case-number {
-          font-size: 12px;
-          color: var(--color-graphite);
-          font-weight: 600;
-          margin-bottom: 2px;
-        }
-        .case-title {
-          font-weight: 500;
-          color: var(--color-ink);
-        }
-        .category-tag {
-          padding-left: 8px;
-          font-weight: 500;
-          color: var(--color-ash);
-        }
+
 
         .loading-container, .error-container {
           min-height: 400px;
