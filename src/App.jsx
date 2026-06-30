@@ -62,15 +62,16 @@ function App() {
 
           if (refreshResponse.ok) {
             const refreshData = await refreshResponse.json();
-            if (refreshData.success && refreshData.token) {
+            const newToken = refreshData.data?.accessToken;
+            if (refreshData.success && newToken) {
               // Store new token
-              localStorage.setItem('token', refreshData.token);
-              if (refreshData.refreshToken) {
-                localStorage.setItem('refreshToken', refreshData.refreshToken);
+              localStorage.setItem('token', newToken);
+              if (refreshData.data?.refreshToken) {
+                localStorage.setItem('refreshToken', refreshData.data.refreshToken);
               }
               
               // Retry original request with new token
-              fetchOptions.headers['Authorization'] = `Bearer ${refreshData.token}`;
+              fetchOptions.headers['Authorization'] = `Bearer ${newToken}`;
               console.log('✅ Token refreshed. Retrying original request.');
               response = await fetch(url, fetchOptions);
             }
