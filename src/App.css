@@ -362,9 +362,27 @@
   margin-left: auto !important;
   margin-right: auto !important;
 }
-.mb-2 {
-  margin-bottom: 8px !important;
-}
+.mt-1 { margin-top: 4px !important; }
+.mt-2 { margin-top: 8px !important; }
+.mt-4 { margin-top: 16px !important; }
+.mt-6 { margin-top: 24px !important; }
+.mt-8 { margin-top: 32px !important; }
+
+.mb-1 { margin-bottom: 4px !important; }
+.mb-2 { margin-bottom: 8px !important; }
+.mb-4 { margin-bottom: 16px !important; }
+.mb-6 { margin-bottom: 24px !important; }
+.mb-8 { margin-bottom: 32px !important; }
+
+.mr-1 { margin-right: 4px !important; }
+.mr-2 { margin-right: 8px !important; }
+.mr-4 { margin-right: 16px !important; }
+
+.ml-1 { margin-left: 4px !important; }
+.ml-2 { margin-left: 8px !important; }
+.ml-4 { margin-left: 16px !important; }
+
+.w-full { width: 100% !important; }
 
 /* Global Empty State Card */
 .empty-state-card {
