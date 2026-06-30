@@ -396,4 +396,32 @@
   margin: 0;
 }
 
+/* Global Grid Layouts */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-24);
+}
+
+@media (max-width: 768px) {
+  .grid-2-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Global Form Card */
+.form-card {
+  background-color: var(--color-pure-white);
+  border-radius: var(--radius-cards); /* 24px */
+  padding: 24px;
+}
+
+.form-card h3 {
+  font-family: var(--font-signifier);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: 16px;
+}
+
 

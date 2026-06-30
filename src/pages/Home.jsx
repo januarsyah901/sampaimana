@@ -448,11 +448,7 @@ function Home({ apiFetch, showToast }) {
           color: var(--color-ink);
           margin-bottom: var(--spacing-16);
         }
-        .grid-2-col {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: var(--spacing-24);
-        }
+
         .visual-card {
           border-radius: var(--radius-cards);
           padding: var(--card-padding);
