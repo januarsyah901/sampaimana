@@ -144,7 +144,7 @@ function Navbar({ user, onLogout }) {
           border-bottom-color: var(--color-ink);
         }
         .admin-link {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 4px;
           color: var(--color-rust);
