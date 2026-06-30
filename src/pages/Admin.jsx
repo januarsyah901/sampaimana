@@ -58,7 +58,7 @@ function Admin({ user, apiFetch, showToast }) {
       apiFetch(`${API_BASE_URL}/cases?limit=100`)
         .then((res) => res.json())
         .then((res) => {
-          if (res.success) setCases(res.data.cases);
+          if (res.success) setCases(res.data || []);
         })
         .catch(console.error);
 
