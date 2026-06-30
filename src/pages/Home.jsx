@@ -173,81 +173,75 @@ function Home({ apiFetch, showToast }) {
       {/* Recent Cases Section — right below hero */}
       <section className="recent-cases-section container">
         {loading || !stats ? (
-          <div className="skeleton skeleton-card" style={{ height: '120px', borderRadius: 'var(--radius-cards)' }}></div>
+          <div className="skeleton skeleton-card" style={{ height: '240px', borderRadius: 'var(--radius-cards)' }}></div>
         ) : (
           <>
-            <div className="section-header">
+            <div className="section-header" style={{ marginBottom: '20px' }}>
               <h2 className="section-title">Kasus Terbaru</h2>
               <Link to="/explore" className="btn-secondary">
                 Lihat Semua <ArrowRight size={14} />
               </Link>
             </div>
-            <div className="recent-cases-strip">
+            <div className="cases-list-card card-shadow">
               {stats.recentCases.length === 0 ? (
-                <p className="empty-text">Belum ada kasus aktif yang terdaftar.</p>
+                <div className="empty-state" style={{ padding: '32px', textAlign: 'center' }}>
+                  <p style={{ color: 'var(--color-ash)' }}>Belum ada kasus aktif yang terdaftar.</p>
+                </div>
               ) : (
-                stats.recentCases.slice(0, 4).map((c) => (
-                  <Link to={`/cases/${c.id}`} key={c.id} className="recent-case-card">
-                    <span className="rcc-number">{c.caseNumber}</span>
-                    <span className="rcc-title">{c.title}</span>
-                    <span className={getStatusClass(c.currentStatus)}>
-                      {getStatusLabel(c.currentStatus)}
-                    </span>
-                  </Link>
-                ))
+                <div className="cases-table-wrapper">
+                  <table className="cases-table">
+                    <thead>
+                      <tr>
+                        <th>Nomor Perkara / Judul</th>
+                        <th>Kategori</th>
+                        <th>Status Saat Ini</th>
+                        <th>Tanggal Terdaftar</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.recentCases.slice(0, 5).map((c) => (
+                        <tr key={c.id}>
+                          <td>
+                            <div className="case-title-block">
+                              <span className="case-number">{c.caseNumber}</span>
+                              <span className="case-title">{c.title}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="category-tag" style={{ borderLeft: `3px solid ${c.category?.color || '#999'}` }}>
+                              {c.category?.name || 'Umum'}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={getStatusClass(c.currentStatus)}>
+                              {getStatusLabel(c.currentStatus)}
+                            </span>
+                          </td>
+                          <td>
+                            {new Date(c.createdAt).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </td>
+                          <td>
+                            <Link to={`/cases/${c.id}`} className="btn-explore-case" style={{ padding: '6px 12px', fontSize: '12px' }}>
+                              Detail
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </>
         )}
       </section>
 
-      {/* Stats Cards Section */}
-      <section className="stats-section container">
-        {loading || !stats ? (
-          <div className="stats-grid">
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-          </div>
-        ) : (
-          <div className="stats-grid">
-            <div className="stat-card card-shadow">
-              <div className="stat-icon-wrapper flex-center">
-                <Database size={20} className="stat-icon" />
-              </div>
-              <p className="stat-value">{stats.totals.cases}</p>
-              <p className="stat-label">Total Kasus Hukum</p>
-              <div className="stat-delta positive">
-                <TrendingUp size={12} /> +12% minggu ini
-              </div>
-            </div>
-
-            <div className="stat-card card-shadow">
-              <div className="stat-icon-wrapper flex-center">
-                <Activity size={20} className="stat-icon" />
-              </div>
-              <p className="stat-value">{stats.totals.activeCases}</p>
-              <p className="stat-label">Kasus Aktif Dipantau</p>
-              <div className="stat-delta positive">
-                <CheckCircle size={12} /> Real-time tracking
-              </div>
-            </div>
-
-            <div className="stat-card card-shadow highlight-card-warm">
-              <div className="stat-icon-wrapper flex-center" style={{ backgroundColor: 'var(--color-rust)', color: 'white' }}>
-                <FileText size={20} />
-              </div>
-              <p className="stat-value" style={{ color: 'var(--color-rust)' }}>
-                {Object.values(stats.byStatus).reduce((a, b) => a + b, 0)}
-              </p>
-              <p className="stat-label">Total Tahapan Terverifikasi</p>
-              <p className="stat-subtext">Diajukan & dimoderasi oleh publik</p>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Main Grid Content */}
+      {/* Main Grid Content (Kategori) */}
       {loading || !stats ? (
         <section className="dashboard-grid container">
           <div className="grid-2-col">
@@ -256,17 +250,15 @@ function Home({ apiFetch, showToast }) {
           </div>
         </section>
       ) : (
-        <section className="dashboard-grid container">
+        <section className="dashboard-grid container" style={{ marginTop: '40px' }}>
           <div className="dashboard-visuals">
             <h2 className="section-title">Kategori & Status</h2>
-            
             <div className="grid-2-col">
               <div className="visual-card warm-card">
                 <h3>Tahapan Kasus</h3>
                 <p className="card-subtitle">Distribusi tahapan hukum saat ini</p>
                 <DonutChart statusCounts={stats.byStatus} total={stats.totals.cases} />
               </div>
-
               <div className="visual-card cool-card">
                 <h3>Kategori Perkara</h3>
                 <p className="card-subtitle">Kasus berdasarkan klasifikasi hukum</p>
@@ -285,6 +277,50 @@ function Home({ apiFetch, showToast }) {
           </div>
         </section>
       )}
+
+      {/* Stats Cards Section (Stat) */}
+      <section className="stats-section container" style={{ marginTop: '40px', marginBottom: '80px' }}>
+        {loading || !stats ? (
+          <div className="stats-grid">
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+          </div>
+        ) : (
+          <div className="stats-grid">
+            <div className="stat-card card-shadow">
+              <div className="stat-icon-wrapper flex-center">
+                <Database size={20} className="stat-icon" />
+              </div>
+              <p className="stat-value">{stats.totals.cases}</p>
+              <p className="stat-label">Total Kasus Hukum</p>
+              <div className="stat-delta positive">
+                <TrendingUp size={12} /> +12% minggu ini
+              </div>
+            </div>
+            <div className="stat-card card-shadow">
+              <div className="stat-icon-wrapper flex-center">
+                <Activity size={20} className="stat-icon" />
+              </div>
+              <p className="stat-value">{stats.totals.activeCases}</p>
+              <p className="stat-label">Kasus Aktif Dipantau</p>
+              <div className="stat-delta positive">
+                <CheckCircle size={12} /> Real-time tracking
+              </div>
+            </div>
+            <div className="stat-card card-shadow highlight-card-warm">
+              <div className="stat-icon-wrapper flex-center" style={{ backgroundColor: 'var(--color-rust)', color: 'white' }}>
+                <FileText size={20} />
+              </div>
+              <p className="stat-value" style={{ color: 'var(--color-rust)' }}>
+                {Object.values(stats.byStatus).reduce((a, b) => a + b, 0)}
+              </p>
+              <p className="stat-label">Total Tahapan Terverifikasi</p>
+              <p className="stat-subtext">Diajukan & dimoderasi oleh publik</p>
+            </div>
+          </div>
+        )}
+      </section>
       
       <style>{`
         .home-page {
