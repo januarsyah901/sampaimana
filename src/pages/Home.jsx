@@ -90,13 +90,14 @@ function DonutChart({ statusCounts, total }) {
   );
 }
 
-function Home() {
+function Home({ apiFetch, showToast }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/dashboard/stats`)
+    const fetchFunc = apiFetch || fetch;
+    fetchFunc(`${API_BASE_URL}/dashboard/stats`)
       .then((res) => {
         if (!res.ok) throw new Error('Gagal memuat data statistik');
         return res.json();
@@ -114,50 +115,7 @@ function Home() {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="home-page">
-        <section className="hero-section">
-          <div className="container hero-container">
-            <div className="skeleton skeleton-title" style={{ width: '80%', margin: '0 auto 24px', height: '48px' }}></div>
-            <div className="skeleton skeleton-text" style={{ width: '60%', margin: '0 auto 12px' }}></div>
-            <div className="skeleton skeleton-text" style={{ width: '40%', margin: '0 auto 32px' }}></div>
-          </div>
-        </section>
-
-        <section className="stats-section container">
-          <div className="stats-grid">
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-          </div>
-        </section>
-
-        <section className="dashboard-grid container">
-          <div className="grid-2-col">
-            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
-            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-container container flex-center">
-        <div className="error-card card-shadow">
-          <h3>Error Loading Dashboard</h3>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary mt-4">
-            Coba Lagi
-          </button>
-        </div>
-      </div>
-    );
-  }
+  }, [apiFetch]);
 
   const getStatusLabel = (status) => {
     switch (status) {
@@ -174,9 +132,23 @@ function Home() {
     return `status-badge status-${status.toLowerCase()}`;
   };
 
+  if (error) {
+    return (
+      <div className="error-container container flex-center">
+        <div className="error-card card-shadow">
+          <h3>Error Loading Dashboard</h3>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary mt-4">
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="home-page">
-      {/* Hero Section */}
+      {/* Hero Section - Always Visible Instantly */}
       <section className="hero-section">
         <div className="hero-glow"></div>
         <div className="container hero-container">
@@ -200,140 +172,157 @@ function Home() {
 
       {/* Stats Cards Section */}
       <section className="stats-section container">
-        <div className="stats-grid">
-          <div className="stat-card card-shadow">
-            <div className="stat-icon-wrapper flex-center">
-              <Database size={20} className="stat-icon" />
-            </div>
-            <p className="stat-value">{stats.totals.cases}</p>
-            <p className="stat-label">Total Kasus Hukum</p>
-            <div className="stat-delta positive">
-              <TrendingUp size={12} /> +12% minggu ini
-            </div>
+        {loading || !stats ? (
+          <div className="stats-grid">
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
           </div>
+        ) : (
+          <div className="stats-grid">
+            <div className="stat-card card-shadow">
+              <div className="stat-icon-wrapper flex-center">
+                <Database size={20} className="stat-icon" />
+              </div>
+              <p className="stat-value">{stats.totals.cases}</p>
+              <p className="stat-label">Total Kasus Hukum</p>
+              <div className="stat-delta positive">
+                <TrendingUp size={12} /> +12% minggu ini
+              </div>
+            </div>
 
-          <div className="stat-card card-shadow">
-            <div className="stat-icon-wrapper flex-center">
-              <Activity size={20} className="stat-icon" />
+            <div className="stat-card card-shadow">
+              <div className="stat-icon-wrapper flex-center">
+                <Activity size={20} className="stat-icon" />
+              </div>
+              <p className="stat-value">{stats.totals.activeCases}</p>
+              <p className="stat-label">Kasus Aktif Dipantau</p>
+              <div className="stat-delta positive">
+                <CheckCircle size={12} /> Real-time tracking
+              </div>
             </div>
-            <p className="stat-value">{stats.totals.activeCases}</p>
-            <p className="stat-label">Kasus Aktif Dipantau</p>
-            <div className="stat-delta positive">
-              <CheckCircle size={12} /> Real-time tracking
-            </div>
-          </div>
 
-          <div className="stat-card card-shadow highlight-card-warm">
-            <div className="stat-icon-wrapper flex-center" style={{ backgroundColor: 'var(--color-rust)', color: 'white' }}>
-              <FileText size={20} />
+            <div className="stat-card card-shadow highlight-card-warm">
+              <div className="stat-icon-wrapper flex-center" style={{ backgroundColor: 'var(--color-rust)', color: 'white' }}>
+                <FileText size={20} />
+              </div>
+              <p className="stat-value" style={{ color: 'var(--color-rust)' }}>
+                {Object.values(stats.byStatus).reduce((a, b) => a + b, 0)}
+              </p>
+              <p className="stat-label">Total Tahapan Terverifikasi</p>
+              <p className="stat-subtext">Diajukan & dimoderasi oleh publik</p>
             </div>
-            <p className="stat-value" style={{ color: 'var(--color-rust)' }}>
-              {Object.values(stats.byStatus).reduce((a, b) => a + b, 0)}
-            </p>
-            <p className="stat-label">Total Tahapan Terverifikasi</p>
-            <p className="stat-subtext">Diajukan & dimoderasi oleh publik</p>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Main Grid Content */}
-      <section className="dashboard-grid container">
-        {/* Left Column: Visual Data Cards */}
-        <div className="dashboard-visuals">
-          <h2 className="section-title">Kategori & Status</h2>
-          
+      {loading || !stats ? (
+        <section className="dashboard-grid container">
           <div className="grid-2-col">
-            {/* Warm Data Card - Apricot Wash */}
-            <div className="visual-card warm-card">
-              <h3>Tahapan Kasus</h3>
-              <p className="card-subtitle">Distribusi tahapan hukum saat ini</p>
-              <DonutChart statusCounts={stats.byStatus} total={stats.totals.cases} />
-            </div>
+            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
+            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
+          </div>
+        </section>
+      ) : (
+        <section className="dashboard-grid container">
+          {/* Left Column: Visual Data Cards */}
+          <div className="dashboard-visuals">
+            <h2 className="section-title">Kategori & Status</h2>
+            
+            <div className="grid-2-col">
+              {/* Warm Data Card - Apricot Wash */}
+              <div className="visual-card warm-card">
+                <h3>Tahapan Kasus</h3>
+                <p className="card-subtitle">Distribusi tahapan hukum saat ini</p>
+                <DonutChart statusCounts={stats.byStatus} total={stats.totals.cases} />
+              </div>
 
-            {/* Cool Data Card - Sky Wash */}
-            <div className="visual-card cool-card">
-              <h3>Kategori Perkara</h3>
-              <p className="card-subtitle">Kasus berdasarkan klasifikasi hukum</p>
-              <div className="category-list">
-                {stats.byCategory.slice(0, 4).map((cat) => (
-                  <div key={cat.id} className="category-row">
-                    <span className="cat-name">{cat.name}</span>
-                    <div className="cat-badge" style={{ backgroundColor: `${cat.color || 'var(--color-slate)'}1a`, color: cat.color || 'var(--color-slate)', fontWeight: 600 }}>
-                      {cat.count} Kasus
+              {/* Cool Data Card - Sky Wash */}
+              <div className="visual-card cool-card">
+                <h3>Kategori Perkara</h3>
+                <p className="card-subtitle">Kasus berdasarkan klasifikasi hukum</p>
+                <div className="category-list">
+                  {stats.byCategory.slice(0, 4).map((cat) => (
+                    <div key={cat.id} className="category-row">
+                      <span className="cat-name">{cat.name}</span>
+                      <div className="cat-badge" style={{ backgroundColor: `${cat.color || 'var(--color-slate)'}1a`, color: cat.color || 'var(--color-slate)', fontWeight: 600 }}>
+                        {cat.count} Kasus
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right/Bottom Section: Recent Cases */}
-        <div className="recent-cases-section">
-          <div className="section-header">
-            <h2 className="section-title">Kasus Terbaru</h2>
-            <Link to="/explore" className="btn-secondary">
-              Lihat Semua Kasus <ArrowRight size={16} />
-            </Link>
-          </div>
+          {/* Right/Bottom Section: Recent Cases */}
+          <div className="recent-cases-section">
+            <div className="section-header">
+              <h2 className="section-title">Kasus Terbaru</h2>
+              <Link to="/explore" className="btn-secondary">
+                Lihat Semua Kasus <ArrowRight size={16} />
+              </Link>
+            </div>
 
-          <div className="cases-list-card card-shadow">
-            {stats.recentCases.length === 0 ? (
-              <div className="empty-state">
-                <p>Belum ada kasus aktif yang terdaftar.</p>
-              </div>
-            ) : (
-              <div className="cases-table-wrapper">
-                <table className="cases-table">
-                  <thead>
-                    <tr>
-                      <th>Nomor Perkara / Judul</th>
-                      <th>Kategori</th>
-                      <th>Status Saat Ini</th>
-                      <th>Tanggal Terdaftar</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.recentCases.map((c) => (
-                      <tr key={c.id}>
-                        <td>
-                          <div className="case-title-block">
-                            <span className="case-number">{c.caseNumber}</span>
-                            <span className="case-title">{c.title}</span>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="category-tag" style={{ borderLeft: `3px solid ${c.category?.color || '#999'}` }}>
-                            {c.category?.name || 'Umum'}
-                          </span>
-                        </td>
-                        <td>
-                          <span className={getStatusClass(c.currentStatus)}>
-                            {getStatusLabel(c.currentStatus)}
-                          </span>
-                        </td>
-                        <td>
-                          {new Date(c.createdAt).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </td>
-                        <td>
-                          <Link to={`/cases/${c.id}`} className="btn-explore-case">
-                            Detail
-                          </Link>
-                        </td>
+            <div className="cases-list-card card-shadow">
+              {stats.recentCases.length === 0 ? (
+                <div className="empty-state">
+                  <p>Belum ada kasus aktif yang terdaftar.</p>
+                </div>
+              ) : (
+                <div className="cases-table-wrapper">
+                  <table className="cases-table">
+                    <thead>
+                      <tr>
+                        <th>Nomor Perkara / Judul</th>
+                        <th>Kategori</th>
+                        <th>Status Saat Ini</th>
+                        <th>Tanggal Terdaftar</th>
+                        <th></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    </thead>
+                    <tbody>
+                      {stats.recentCases.map((c) => (
+                        <tr key={c.id}>
+                          <td>
+                            <div className="case-title-block">
+                              <span className="case-number">{c.caseNumber}</span>
+                              <span className="case-title">{c.title}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="category-tag" style={{ borderLeft: `3px solid ${c.category?.color || '#999'}` }}>
+                              {c.category?.name || 'Umum'}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={getStatusClass(c.currentStatus)}>
+                              {getStatusLabel(c.currentStatus)}
+                            </span>
+                          </td>
+                          <td>
+                            {new Date(c.createdAt).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </td>
+                          <td>
+                            <Link to={`/cases/${c.id}`} className="btn-explore-case">
+                              Detail
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       
       <style>{`
         .home-page {
