@@ -140,8 +140,32 @@ function CaseDetail() {
 
   if (loading) {
     return (
-      <div className="loading-container flex-center">
-        <div className="loading-spinner"></div>
+      <div className="case-detail-page container">
+        <div className="back-nav">
+          <div className="skeleton" style={{ width: '160px', height: '36px', borderRadius: '9999px' }}></div>
+        </div>
+
+        <section className="case-header-section card-shadow">
+          <div className="skeleton skeleton-text" style={{ width: '30%', marginBottom: '16px' }}></div>
+          <div className="skeleton skeleton-title" style={{ width: '70%', height: '40px' }}></div>
+          <div className="skeleton skeleton-text" style={{ width: '90%' }}></div>
+          <div className="skeleton skeleton-text" style={{ width: '85%' }}></div>
+          <div className="skeleton skeleton-text" style={{ width: '60%' }}></div>
+        </section>
+
+        <section className="timeline-section">
+          <div className="skeleton skeleton-title" style={{ width: '250px' }}></div>
+          <div className="timeline-container">
+            <div className="timeline-item">
+              <div className="timeline-marker-wrapper"><div className="timeline-marker skeleton"></div><div className="timeline-line"></div></div>
+              <div className="timeline-content-card card-shadow skeleton" style={{ height: '72px', flex: 1, marginBottom: '24px' }}></div>
+            </div>
+            <div className="timeline-item">
+              <div className="timeline-marker-wrapper"><div className="timeline-marker skeleton"></div></div>
+              <div className="timeline-content-card card-shadow skeleton" style={{ height: '72px', flex: 1 }}></div>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }

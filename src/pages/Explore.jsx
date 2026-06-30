@@ -171,8 +171,10 @@ function Explore() {
 
       {/* Grid Cases */}
       {loading ? (
-        <div className="loading-container flex-center">
-          <div className="loading-spinner"></div>
+        <div className="cases-grid">
+          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
+          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
+          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
         </div>
       ) : error ? (
         <div className="error-card card-shadow mt-4">

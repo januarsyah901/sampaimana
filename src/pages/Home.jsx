@@ -31,8 +31,29 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="loading-container flex-center">
-        <div className="loading-spinner"></div>
+      <div className="home-page">
+        <section className="hero-section">
+          <div className="container hero-container">
+            <div className="skeleton skeleton-title" style={{ width: '80%', margin: '0 auto 24px', height: '48px' }}></div>
+            <div className="skeleton skeleton-text" style={{ width: '60%', margin: '0 auto 12px' }}></div>
+            <div className="skeleton skeleton-text" style={{ width: '40%', margin: '0 auto 32px' }}></div>
+          </div>
+        </section>
+
+        <section className="stats-section container">
+          <div className="stats-grid">
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+          </div>
+        </section>
+
+        <section className="dashboard-grid container">
+          <div className="grid-2-col">
+            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
+            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
+          </div>
+        </section>
       </div>
     );
   }
@@ -166,7 +187,7 @@ function Home() {
                 {stats.byCategory.slice(0, 4).map((cat) => (
                   <div key={cat.id} className="category-row">
                     <span className="cat-name">{cat.name}</span>
-                    <div className="cat-badge" style={{ backgroundColor: cat.color || 'var(--color-slate)', color: 'white' }}>
+                    <div className="cat-badge" style={{ backgroundColor: `${cat.color || 'var(--color-slate)'}1a`, color: cat.color || 'var(--color-slate)', fontWeight: 600 }}>
                       {cat.count} Kasus
                     </div>
                   </div>
