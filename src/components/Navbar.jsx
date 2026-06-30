@@ -255,6 +255,11 @@ function Navbar({ user, onLogout }) {
           color: #ef4444;
           background: #fef2f2;
         }
+        .auth-buttons {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-16);
+        }
       `}</style>
     </nav>
   );
