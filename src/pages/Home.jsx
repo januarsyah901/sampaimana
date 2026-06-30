@@ -4,6 +4,7 @@ import { FileText, ArrowRight, Activity, Database, CheckCircle, TrendingUp } fro
 import { API_BASE_URL } from '../config';
 
 function DonutChart({ statusCounts, total }) {
+  const [hoveredStatus, setHoveredStatus] = useState(null);
   const statuses = Object.entries(statusCounts);
   const colors = {
     PELAPORAN: '#d97706',
@@ -51,6 +52,9 @@ function DonutChart({ statusCounts, total }) {
           const strokeOffset = circumference - (accumulatedPercentage * circumference);
           accumulatedPercentage += percentage;
 
+          const isHovered = hoveredStatus === status;
+          const isAnyHovered = hoveredStatus !== null;
+
           return (
             <circle
               key={status}
@@ -59,32 +63,68 @@ function DonutChart({ statusCounts, total }) {
               r={radius}
               fill="transparent"
               stroke={colors[status] || 'var(--color-rust)'}
-              strokeWidth="8"
+              strokeWidth={isHovered ? 11 : 8}
               strokeDasharray={`${strokeLength} ${circumference}`}
               strokeDashoffset={-strokeOffset}
               className="donut-segment"
+              onMouseEnter={() => setHoveredStatus(status)}
+              onMouseLeave={() => setHoveredStatus(null)}
               style={{
-                transition: 'stroke-dashoffset 0.5s ease',
+                transition: 'stroke-width 0.2s ease, opacity 0.2s ease',
                 transformOrigin: '50px 50px',
-                transform: 'rotate(-90deg)'
+                transform: 'rotate(-90deg)',
+                cursor: 'pointer',
+                opacity: isAnyHovered ? (isHovered ? 1 : 0.35) : 1,
               }}
             />
           );
         })}
-        <g className="donut-center-text">
-          <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="16" fontWeight="700">{total}</text>
-          <text x="50" y="60" textAnchor="middle" fill="var(--color-graphite)" fontSize="7" fontWeight="600" letterSpacing="0.2px">TOTAL KASUS</text>
+        <g className="donut-center-text" style={{ pointerEvents: 'none' }}>
+          {hoveredStatus ? (
+            <>
+              <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="17" fontWeight="700">
+                {statusCounts[hoveredStatus]}
+              </text>
+              <text x="50" y="60" textAnchor="middle" fill={colors[hoveredStatus]} fontSize="6" fontWeight="700" letterSpacing="0.1px">
+                {getStatusLabel(hoveredStatus).toUpperCase()}
+              </text>
+            </>
+          ) : (
+            <>
+              <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="17" fontWeight="700">
+                {total}
+              </text>
+              <text x="50" y="60" textAnchor="middle" fill="var(--color-graphite)" fontSize="6" fontWeight="600" letterSpacing="0.1px">
+                TOTAL KASUS
+              </text>
+            </>
+          )}
         </g>
       </svg>
       
       <div className="donut-legend">
-        {statuses.map(([status, count]) => (
-          <div key={status} className="legend-item">
-            <span className="legend-dot" style={{ backgroundColor: colors[status] }}></span>
-            <span className="legend-label">{getStatusLabel(status)}</span>
-            <span className="legend-count">{count}</span>
-          </div>
-        ))}
+        {statuses.map(([status, count]) => {
+          const isHovered = hoveredStatus === status;
+          return (
+            <div 
+              key={status} 
+              className={`legend-item ${isHovered ? 'hovered' : ''}`}
+              onMouseEnter={() => setHoveredStatus(status)}
+              onMouseLeave={() => setHoveredStatus(null)}
+              style={{
+                cursor: 'pointer',
+                opacity: hoveredStatus !== null && !isHovered ? 0.4 : 1,
+                transition: 'opacity 0.2s ease',
+              }}
+            >
+              <span className="legend-dot" style={{ backgroundColor: colors[status] }}></span>
+              <span className="legend-label" style={{ fontWeight: isHovered ? '600' : '400' }}>
+                {getStatusLabel(status)}
+              </span>
+              <span className="legend-count">{count}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -484,6 +524,15 @@ function Home({ apiFetch, showToast }) {
           background: rgba(255, 255, 255, 0.4);
           padding: 8px 12px;
           border-radius: 12px;
+          transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+          border: 1px solid transparent;
+          cursor: default;
+        }
+        .category-row:hover {
+          background: rgba(255, 255, 255, 0.85);
+          transform: translateY(-1.5px);
+          border-color: rgba(0, 0, 0, 0.04);
+          box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.04);
         }
         .cat-name {
           font-size: 13px;
