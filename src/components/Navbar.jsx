@@ -26,7 +26,7 @@ function Navbar({ user, onLogout }) {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          🏛️ <span className="logo-text">Sampai Mana</span>
+          <span className="logo-text">Sampai Mana</span>
         </Link>
 
         <div className="navbar-links">
