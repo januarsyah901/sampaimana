@@ -611,6 +611,34 @@ function Home({ apiFetch, showToast }) {
           color: var(--color-ink);
           margin-left: 8px;
         }
+
+        @media (max-width: 768px) {
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+          .hero-section {
+            padding: 64px 0 40px;
+          }
+          .hero-section h1 {
+            font-size: 28px !important;
+            line-height: 1.2;
+          }
+          .hero-section p {
+            font-size: 14px !important;
+          }
+          .dashboard-visuals .grid-2-col {
+            grid-template-columns: 1fr;
+          }
+          .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+          .section-header .btn-secondary {
+            width: 100%;
+            justify-content: center;
+          }
+        }
       `}</style>
     </div>
   );

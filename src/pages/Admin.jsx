@@ -101,6 +101,21 @@ function Admin({ user, apiFetch, showToast }) {
     }
   };
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'PELAPORAN': return 'Pelaporan';
+      case 'PENYIDIKAN': return 'Penyidikan';
+      case 'PENUNTUTAN': return 'Penuntutan';
+      case 'PERSIDANGAN': return 'Persidangan';
+      case 'PUTUSAN': return 'Putusan';
+      default: return status;
+    }
+  };
+
+  const getStatusClass = (status) => {
+    return `status-badge status-${status.toLowerCase()}`;
+  };
+
   const handleVerifyContribution = (id, status, reason = '') => {
     apiFetch(`${API_BASE_URL}/admin/contributions/${id}/verify`, {
       method: 'PUT',
@@ -572,6 +587,7 @@ function Admin({ user, apiFetch, showToast }) {
                       <thead>
                         <tr>
                           <th>Nomor Perkara / Judul</th>
+                          <th>Kategori</th>
                           <th>Status Saat Ini</th>
                           <th>Aksi</th>
                         </tr>
@@ -580,9 +596,21 @@ function Admin({ user, apiFetch, showToast }) {
                         {cases.map((c) => (
                           <tr key={c.id}>
                             <td>
-                              <strong>{c.caseNumber}</strong> - {c.title}
+                              <div className="case-title-block">
+                                <span className="case-number">{c.caseNumber}</span>
+                                <span className="case-title">{c.title}</span>
+                              </div>
                             </td>
-                            <td>{c.currentStatus}</td>
+                            <td>
+                              <span className="category-tag" style={{ borderLeft: `3px solid ${c.category?.color || '#999'}` }}>
+                                {c.category?.name || 'Umum'}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={getStatusClass(c.currentStatus)}>
+                                {getStatusLabel(c.currentStatus)}
+                              </span>
+                            </td>
                             <td>
                               <div style={{ display: 'flex', gap: '8px' }}>
                                 <button

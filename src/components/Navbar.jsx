@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, User, Shield } from 'lucide-react';
+import { LogOut, User, Shield, Menu, X } from 'lucide-react';
 
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -16,6 +19,16 @@ function Navbar({ user, onLogout }) {
       .toUpperCase();
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const isActive = (path) => location.pathname === path;
 
   // Pastels for avatars based on name length
@@ -23,63 +36,73 @@ function Navbar({ user, onLogout }) {
   const avatarBg = pastelColors[(user?.name?.length || 0) % pastelColors.length];
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
       <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
+        <Link to="/" className="navbar-logo" onClick={() => setMobileMenuOpen(false)}>
           <span className="logo-text">Sampai Mana</span>
         </Link>
 
-        <div className="navbar-links">
-          <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
+        <button 
+          className="mobile-nav-toggle"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+
+        <div className={`navbar-links ${mobileMenuOpen ? 'show' : ''}`}>
+          <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
             Dashboard
           </Link>
-          <Link to="/explore" className={`nav-link ${isActive('/explore') ? 'active' : ''}`}>
+          <Link to="/explore" className={`nav-link ${isActive('/explore') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
             Telusuri Kasus
           </Link>
           {user && (
-            <Link to="/contributions" className={`nav-link ${isActive('/contributions') ? 'active' : ''}`}>
+            <Link to="/contributions" className={`nav-link ${isActive('/contributions') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
               Kontribusi Saya
             </Link>
           )}
           {user && (user.role === 'SUPER_ADMIN' || user.role === 'EDITOR') && (
-            <Link to="/admin" className={`nav-link admin-link ${isActive('/admin') ? 'active' : ''}`}>
+            <Link to="/admin" className={`nav-link admin-link ${isActive('/admin') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
               <Shield size={14} className="mr-1" /> Panel Admin
             </Link>
           )}
         </div>
 
-        <div className="navbar-actions">
+        <div className={`navbar-actions ${mobileMenuOpen ? 'show' : ''}`}>
           {user ? (
-            <div className="user-profile-menu">
-              <div className="avatar" style={{ backgroundColor: avatarBg }}>
+            <div className="user-profile-menu" ref={dropdownRef}>
+              <div className="avatar" style={{ backgroundColor: avatarBg }} onClick={() => setDropdownOpen((prev) => !prev)}>
                 {getInitials(user.name)}
               </div>
-              <div className="user-dropdown">
-                <div className="dropdown-header">
-                  <p className="user-name">{user.name}</p>
-                  <p className="user-email">{user.email}</p>
-                  <span className={`role-badge role-${user.role.toLowerCase()}`}>{user.role}</span>
-                </div>
-                <hr className="dropdown-divider" />
-                {user.role === 'SUPER_ADMIN' || user.role === 'EDITOR' ? (
-                  <Link to="/admin" className="dropdown-item">
-                    <Shield size={16} /> Panel Admin
+              {dropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="dropdown-header">
+                    <p className="user-name">{user.name}</p>
+                    <p className="user-email">{user.email}</p>
+                    <span className={`role-badge role-${user.role.toLowerCase()}`}>{user.role}</span>
+                  </div>
+                  <hr className="dropdown-divider" />
+                  {user.role === 'SUPER_ADMIN' || user.role === 'EDITOR' ? (
+                    <Link to="/admin" className="dropdown-item" onClick={() => { setDropdownOpen(false); setMobileMenuOpen(false); }}>
+                      <Shield size={16} /> Panel Admin
+                    </Link>
+                  ) : null}
+                  <Link to="/contributions" className="dropdown-item" onClick={() => { setDropdownOpen(false); setMobileMenuOpen(false); }}>
+                    <User size={16} /> Kontribusi Saya
                   </Link>
-                ) : null}
-                <Link to="/contributions" className="dropdown-item">
-                  <User size={16} /> Kontribusi Saya
-                </Link>
-                <button onClick={onLogout} className="dropdown-item logout-btn">
-                  <LogOut size={16} /> Keluar
-                </button>
-              </div>
+                  <button onClick={() => { onLogout(); setDropdownOpen(false); setMobileMenuOpen(false); }} className="dropdown-item logout-btn">
+                    <LogOut size={16} /> Keluar
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="auth-buttons">
-              <Link to="/login" className="btn-secondary">
+              <Link to="/login" className="btn-secondary" onClick={() => setMobileMenuOpen(false)}>
                 Masuk
               </Link>
-              <Link to="/register" className="btn-primary">
+              <Link to="/register" className="btn-primary" onClick={() => setMobileMenuOpen(false)}>
                 Daftar Kontributor
               </Link>
             </div>
@@ -186,13 +209,10 @@ function Navbar({ user, onLogout }) {
           box-shadow: var(--shadow-subtle);
           width: 240px;
           padding: 12px;
-          display: none;
+          display: flex;
           flex-direction: column;
           gap: 4px;
-        }
-        .user-profile-menu:hover .user-dropdown,
-        .user-dropdown:hover {
-          display: flex;
+          z-index: 200;
         }
         .dropdown-header {
           padding: 4px 8px 8px;
@@ -259,6 +279,75 @@ function Navbar({ user, onLogout }) {
           display: flex;
           align-items: center;
           gap: var(--spacing-16);
+        }
+
+        .mobile-nav-toggle {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--color-ink);
+          padding: 8px;
+          z-index: 250;
+        }
+
+        @media (max-width: 768px) {
+          .mobile-nav-toggle {
+            display: block;
+          }
+          .navbar-links {
+            display: none;
+          }
+          .navbar-links.show {
+            display: flex;
+            position: fixed;
+            top: 68px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-pure-white);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            z-index: 190;
+            padding: 32px;
+          }
+          .navbar-links.show .nav-link {
+            font-size: 20px;
+            font-weight: 600;
+          }
+          .navbar-actions {
+            display: none;
+          }
+          .navbar-actions.show {
+            display: flex;
+            position: fixed;
+            bottom: 40px;
+            left: 24px;
+            right: 24px;
+            z-index: 200;
+            justify-content: center;
+          }
+          .auth-buttons {
+            width: 100%;
+            flex-direction: column;
+            gap: 12px;
+          }
+          .auth-buttons .btn-primary,
+          .auth-buttons .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            justify-content: center;
+          }
+          .user-profile-menu .user-dropdown {
+            position: fixed;
+            bottom: 100px;
+            left: 24px;
+            right: 24px;
+            width: auto;
+          }
         }
       `}</style>
     </nav>
