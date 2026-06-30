@@ -170,6 +170,37 @@ function Home({ apiFetch, showToast }) {
         </div>
       </section>
 
+      {/* Recent Cases Section — right below hero */}
+      <section className="recent-cases-section container">
+        {loading || !stats ? (
+          <div className="skeleton skeleton-card" style={{ height: '120px', borderRadius: 'var(--radius-cards)' }}></div>
+        ) : (
+          <>
+            <div className="section-header">
+              <h2 className="section-title">Kasus Terbaru</h2>
+              <Link to="/explore" className="btn-secondary">
+                Lihat Semua <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div className="recent-cases-strip">
+              {stats.recentCases.length === 0 ? (
+                <p className="empty-text">Belum ada kasus aktif yang terdaftar.</p>
+              ) : (
+                stats.recentCases.slice(0, 4).map((c) => (
+                  <Link to={`/cases/${c.id}`} key={c.id} className="recent-case-card">
+                    <span className="rcc-number">{c.caseNumber}</span>
+                    <span className="rcc-title">{c.title}</span>
+                    <span className={getStatusClass(c.currentStatus)}>
+                      {getStatusLabel(c.currentStatus)}
+                    </span>
+                  </Link>
+                ))
+              )}
+            </div>
+          </>
+        )}
+      </section>
+
       {/* Stats Cards Section */}
       <section className="stats-section container">
         {loading || !stats ? (
@@ -226,19 +257,16 @@ function Home({ apiFetch, showToast }) {
         </section>
       ) : (
         <section className="dashboard-grid container">
-          {/* Left Column: Visual Data Cards */}
           <div className="dashboard-visuals">
             <h2 className="section-title">Kategori & Status</h2>
             
             <div className="grid-2-col">
-              {/* Warm Data Card - Apricot Wash */}
               <div className="visual-card warm-card">
                 <h3>Tahapan Kasus</h3>
                 <p className="card-subtitle">Distribusi tahapan hukum saat ini</p>
                 <DonutChart statusCounts={stats.byStatus} total={stats.totals.cases} />
               </div>
 
-              {/* Cool Data Card - Sky Wash */}
               <div className="visual-card cool-card">
                 <h3>Kategori Perkara</h3>
                 <p className="card-subtitle">Kasus berdasarkan klasifikasi hukum</p>
@@ -253,72 +281,6 @@ function Home({ apiFetch, showToast }) {
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Right/Bottom Section: Recent Cases */}
-          <div className="recent-cases-section">
-            <div className="section-header">
-              <h2 className="section-title">Kasus Terbaru</h2>
-              <Link to="/explore" className="btn-secondary">
-                Lihat Semua Kasus <ArrowRight size={16} />
-              </Link>
-            </div>
-
-            <div className="cases-list-card card-shadow">
-              {stats.recentCases.length === 0 ? (
-                <div className="empty-state">
-                  <p>Belum ada kasus aktif yang terdaftar.</p>
-                </div>
-              ) : (
-                <div className="cases-table-wrapper">
-                  <table className="cases-table">
-                    <thead>
-                      <tr>
-                        <th>Nomor Perkara / Judul</th>
-                        <th>Kategori</th>
-                        <th>Status Saat Ini</th>
-                        <th>Tanggal Terdaftar</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {stats.recentCases.map((c) => (
-                        <tr key={c.id}>
-                          <td>
-                            <div className="case-title-block">
-                              <span className="case-number">{c.caseNumber}</span>
-                              <span className="case-title">{c.title}</span>
-                            </div>
-                          </td>
-                          <td>
-                            <span className="category-tag" style={{ borderLeft: `3px solid ${c.category?.color || '#999'}` }}>
-                              {c.category?.name || 'Umum'}
-                            </span>
-                          </td>
-                          <td>
-                            <span className={getStatusClass(c.currentStatus)}>
-                              {getStatusLabel(c.currentStatus)}
-                            </span>
-                          </td>
-                          <td>
-                            {new Date(c.createdAt).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </td>
-                          <td>
-                            <Link to={`/cases/${c.id}`} className="btn-explore-case">
-                              Detail
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
             </div>
           </div>
         </section>
@@ -382,7 +344,7 @@ function Home({ apiFetch, showToast }) {
           transform: translateX(4px);
         }
         .stats-section {
-          margin-bottom: 48px;
+          margin: 40px 0 48px;
         }
         .stats-grid {
           display: grid;
@@ -532,13 +494,58 @@ function Home({ apiFetch, showToast }) {
           border-radius: 6px;
         }
         .recent-cases-section {
-          margin-top: var(--spacing-20);
+          margin-top: 40px;
+        }
+        .recent-cases-strip {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+        .recent-case-card {
+          flex-shrink: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          width: 220px;
+          padding: 14px 16px;
+          border-radius: var(--radius-cards);
+          background: var(--surface-fog);
+          border: 1px solid var(--color-dove);
+          text-decoration: none;
+          transition: background 0.2s, border-color 0.2s;
+        }
+        .recent-case-card:hover {
+          background: var(--color-pure-white);
+          border-color: var(--color-graphite);
+        }
+        .rcc-number {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--color-graphite);
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+        .rcc-title {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--color-ink);
+          line-height: 1.3;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .empty-text {
+          color: var(--color-graphite);
+          font-size: 14px;
+          padding: 16px 0;
         }
         .section-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: var(--spacing-16);
+          margin-bottom: var(--spacing-12);
         }
 
 
@@ -629,14 +636,13 @@ function Home({ apiFetch, showToast }) {
           .dashboard-visuals .grid-2-col {
             grid-template-columns: 1fr;
           }
-          .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
+          .recent-cases-section .section-header {
+            flex-direction: row;
+            align-items: center;
           }
-          .section-header .btn-secondary {
-            width: 100%;
-            justify-content: center;
+          .recent-case-card {
+            width: 180px;
+            padding: 10px 12px;
           }
         }
       `}</style>

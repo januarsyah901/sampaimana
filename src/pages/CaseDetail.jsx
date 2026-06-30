@@ -206,6 +206,9 @@ function CaseDetail({ apiFetch, showToast }) {
         <Link to="/explore" className="btn-secondary">
           <ArrowLeft size={16} /> Kembali ke Daftar Kasus
         </Link>
+        <button onClick={handlePrint} className="btn-secondary btn-print-desktop">
+          <Download size={14} /> Cetak Laporan (PDF)
+        </button>
       </div>
 
       <button onClick={handlePrint} className="btn-print-float">
@@ -361,9 +364,18 @@ function CaseDetail({ apiFetch, showToast }) {
         .back-nav {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           margin-bottom: var(--spacing-24);
         }
+        .btn-print-desktop {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          border: 1px solid var(--color-dove);
+          background: white;
+        }
         .btn-print-float {
+          display: none;
           position: fixed;
           bottom: 32px;
           right: 32px;
@@ -375,7 +387,6 @@ function CaseDetail({ apiFetch, showToast }) {
           border: none;
           box-shadow: 0 4px 16px rgba(0,0,0,0.18);
           cursor: pointer;
-          display: flex;
           align-items: center;
           justify-content: center;
           transition: transform 0.2s, box-shadow 0.2s;
@@ -625,7 +636,11 @@ function CaseDetail({ apiFetch, showToast }) {
             align-items: stretch;
             gap: 12px;
           }
+          .btn-print-desktop {
+            display: none;
+          }
           .btn-print-float {
+            display: flex;
             bottom: 20px;
             right: 20px;
             width: 48px;
