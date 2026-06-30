@@ -32,6 +32,17 @@ function Admin({ user, apiFetch, showToast }) {
   const [articleContent, setArticleContent] = useState('');
   const [articleAttachments, setArticleAttachments] = useState('');
 
+  // Editing and nested CRUD states
+  const [editingCase, setEditingCase] = useState(null);
+  const [editCaseNumber, setEditCaseNumber] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editCategoryId, setEditCategoryId] = useState('');
+  const [editCurrentStatus, setEditCurrentStatus] = useState('PELAPORAN');
+
+  const [stagesOfSelectedCase, setStagesOfSelectedCase] = useState([]);
+  const [editingStage, setEditingStage] = useState(null);
+
   useEffect(() => {
     loadData();
   }, [activeTab]);
@@ -160,32 +171,35 @@ function Admin({ user, apiFetch, showToast }) {
       });
   };
 
-  const handleCreateStage = (e) => {
-    e.preventDefault();
-    const payload = {
-      stageType,
-      status: stageStatus,
-      startedAt: stageStartedAt ? new Date(stageStartedAt).toISOString() : new Date().toISOString(),
-      articleTitle: articleTitle || undefined,
-      articleContent: articleContent || undefined,
-      attachments: articleAttachments ? articleAttachments.split(',').map(link => link.trim()) : undefined
-    };
+  const handleEditCaseClick = (c) => {
+    setEditingCase(c);
+    setEditCaseNumber(c.caseNumber || '');
+    setEditTitle(c.title || '');
+    setEditDescription(c.description || '');
+    setEditCategoryId(c.categoryId || '');
+    setEditCurrentStatus(c.currentStatus || 'PELAPORAN');
+  };
 
-    apiFetch(`${API_BASE_URL}/admin/cases/${selectedCaseForStage}/stages`, {
-      method: 'POST',
+  const handleUpdateCase = (e) => {
+    e.preventDefault();
+    apiFetch(`${API_BASE_URL}/admin/cases/${editingCase.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        caseNumber: editCaseNumber,
+        title: editTitle,
+        description: editDescription,
+        categoryId: editCategoryId,
+        currentStatus: editCurrentStatus
+      })
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          if (showToast) showToast('Tahapan perkara baru berhasil ditambahkan.', 'success');
-          setSelectedCaseForStage('');
-          setArticleTitle('');
-          setArticleContent('');
-          setArticleAttachments('');
+          if (showToast) showToast('Kasus berhasil diperbarui.', 'success');
+          setEditingCase(null);
           loadData();
         } else {
           throw new Error(res.message);
@@ -195,6 +209,201 @@ function Admin({ user, apiFetch, showToast }) {
         console.error(err);
         if (showToast) showToast(err.message, 'error');
       });
+  };
+
+  const fetchStagesOfCase = (caseId) => {
+    if (!caseId) {
+      setStagesOfSelectedCase([]);
+      return;
+    }
+    apiFetch(`${API_BASE_URL}/cases/${caseId}/stages`)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          setStagesOfSelectedCase(res.data || []);
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleCaseChangeForStage = (caseId) => {
+    setSelectedCaseForStage(caseId);
+    fetchStagesOfCase(caseId);
+    setEditingStage(null);
+    setStageType('PELAPORAN');
+    setStageStatus('AKTIF');
+    setStageStartedAt('');
+    setArticleTitle('');
+    setArticleContent('');
+    setArticleAttachments('');
+  };
+
+  const handleEditStageClick = (st) => {
+    apiFetch(`${API_BASE_URL}/cases/${selectedCaseForStage}/stages/${st.id}`)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          const detail = res.data;
+          setEditingStage(detail);
+          setStageType(detail.stageType || 'PELAPORAN');
+          setStageStatus(detail.status || 'AKTIF');
+          if (detail.startedAt) {
+            setStageStartedAt(new Date(detail.startedAt).toISOString().split('T')[0]);
+          } else {
+            setStageStartedAt('');
+          }
+          if (detail.article) {
+            setArticleTitle(detail.article.title || '');
+            setArticleContent(detail.article.content || '');
+            
+            let attachmentLinks = '';
+            if (detail.article.attachments) {
+              try {
+                const parsed = JSON.parse(detail.article.attachments);
+                if (Array.isArray(parsed)) {
+                  attachmentLinks = parsed.join(', ');
+                }
+              } catch (e) {
+                attachmentLinks = detail.article.attachments;
+              }
+            }
+            setArticleAttachments(attachmentLinks);
+          } else {
+            setArticleTitle('');
+            setArticleContent('');
+            setArticleAttachments('');
+          }
+        } else {
+          throw new Error(res.message);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (showToast) showToast('Gagal memuat detail tahapan.', 'error');
+      });
+  };
+
+  const handleDeleteStage = (stageId) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus tahapan timeline ini?')) return;
+    apiFetch(`${API_BASE_URL}/admin/stages/${stageId}`, {
+      method: 'DELETE'
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          if (showToast) showToast('Tahapan kasus berhasil dihapus.', 'success');
+          fetchStagesOfCase(selectedCaseForStage);
+          loadData();
+        } else {
+          throw new Error(res.message);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (showToast) showToast(err.message, 'error');
+      });
+  };
+
+  const handleCreateOrUpdateStage = (e) => {
+    e.preventDefault();
+    
+    const stagePayload = {
+      stageType,
+      status: stageStatus,
+      startedAt: stageStartedAt ? new Date(stageStartedAt).toISOString() : new Date().toISOString()
+    };
+
+    if (editingStage) {
+      apiFetch(`${API_BASE_URL}/admin/stages/${editingStage.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(stagePayload)
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
+            if (articleTitle && articleContent) {
+              const articlePayload = {
+                title: articleTitle,
+                content: articleContent,
+                stageId: editingStage.id,
+                attachments: articleAttachments ? articleAttachments.split(',').map(link => link.trim()) : []
+              };
+
+              const method = editingStage.article ? 'PUT' : 'POST';
+              const url = editingStage.article 
+                ? `${API_BASE_URL}/admin/articles/${editingStage.article.id}`
+                : `${API_BASE_URL}/admin/articles`;
+
+              return apiFetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(articlePayload)
+              }).then(r => r.json());
+            }
+            return res;
+          } else {
+            throw new Error(res.message);
+          }
+        })
+        .then((res) => {
+          if (showToast) showToast('Tahapan kasus berhasil diperbarui.', 'success');
+          setEditingStage(null);
+          setArticleTitle('');
+          setArticleContent('');
+          setArticleAttachments('');
+          fetchStagesOfCase(selectedCaseForStage);
+          loadData();
+        })
+        .catch((err) => {
+          console.error(err);
+          if (showToast) showToast(err.message, 'error');
+        });
+    } else {
+      apiFetch(`${API_BASE_URL}/admin/cases/${selectedCaseForStage}/stages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(stagePayload)
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
+            if (articleTitle && articleContent) {
+              const articlePayload = {
+                title: articleTitle,
+                content: articleContent,
+                stageId: res.data.id,
+                attachments: articleAttachments ? articleAttachments.split(',').map(link => link.trim()) : []
+              };
+
+              return apiFetch(`${API_BASE_URL}/admin/articles`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(articlePayload)
+              }).then(r => r.json());
+            }
+            return res;
+          } else {
+            throw new Error(res.message);
+          }
+        })
+        .then((res) => {
+          if (showToast) showToast('Tahapan perkara baru berhasil ditambahkan.', 'success');
+          setArticleTitle('');
+          setArticleContent('');
+          setArticleAttachments('');
+          fetchStagesOfCase(selectedCaseForStage);
+          loadData();
+        })
+        .catch((err) => {
+          console.error(err);
+          if (showToast) showToast(err.message, 'error');
+        });
+    }
   };
 
   if (user?.role !== 'SUPER_ADMIN' && user?.role !== 'EDITOR') {
@@ -409,15 +618,16 @@ function Admin({ user, apiFetch, showToast }) {
 
                   {/* Right Column: Manage Stage Timeline */}
                   <div className="form-card card-shadow">
-                    <h3>Tambah Tahapan Timeline & Artikel</h3>
-                    <form onSubmit={handleCreateStage} className="mt-4">
+                    <h3>{editingStage ? 'Edit Tahapan Timeline & Artikel' : 'Tambah Tahapan Timeline & Artikel'}</h3>
+                    <form onSubmit={handleCreateOrUpdateStage} className="mt-4">
                       <div className="form-group">
                         <label className="form-label">Pilih Kasus</label>
                         <select
                           required
                           value={selectedCaseForStage}
-                          onChange={(e) => setSelectedCaseForStage(e.target.value)}
+                          onChange={(e) => handleCaseChangeForStage(e.target.value)}
                           className="form-input"
+                          disabled={!!editingStage}
                         >
                           <option value="">-- Pilih Kasus --</option>
                           {cases.map((c) => (
@@ -496,10 +706,117 @@ function Admin({ user, apiFetch, showToast }) {
                           className="form-input"
                         />
                       </div>
-                      <button type="submit" className="btn-primary w-full mt-4">
-                        Tambah Tahap & Artikel
-                      </button>
+                      {editingStage ? (
+                        <div style={{ display: 'flex', gap: '12px' }} className="mt-4">
+                          <button type="submit" className="btn-primary w-full">
+                            Simpan Perubahan
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingStage(null);
+                              setStageType('PELAPORAN');
+                              setStageStatus('AKTIF');
+                              setStageStartedAt('');
+                              setArticleTitle('');
+                              setArticleContent('');
+                              setArticleAttachments('');
+                            }}
+                            className="btn-secondary w-full"
+                          >
+                            Batal Edit
+                          </button>
+                        </div>
+                      ) : (
+                        <button type="submit" className="btn-primary w-full mt-4">
+                          Tambah Tahap & Artikel
+                        </button>
+                      )}
                     </form>
+
+                    {selectedCaseForStage && (
+                      <div className="stages-list-section mt-6" style={{ borderTop: '1px solid var(--color-fog)', paddingTop: '20px' }}>
+                        <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-ink)' }}>Daftar Tahapan Saat Ini ({stagesOfSelectedCase.length})</h4>
+                        {stagesOfSelectedCase.length === 0 ? (
+                          <p style={{ fontSize: '13px', color: 'var(--color-ash)', marginTop: '8px' }}>Belum ada tahapan pada perkara ini.</p>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                            {stagesOfSelectedCase.map((st) => (
+                              <div
+                                key={st.id}
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  backgroundColor: 'var(--surface-fog)',
+                                  padding: '12px 16px',
+                                  borderRadius: '12px',
+                                  border: '1px solid var(--color-fog)'
+                                }}
+                              >
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-ink)' }}>{st.stageType}</span>
+                                    <span
+                                      style={{
+                                        fontSize: '10px',
+                                        fontWeight: '700',
+                                        marginLeft: '8px',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        backgroundColor: st.status === 'SELESAI' ? '#dcfce7' : st.status === 'AKTIF' ? '#e0f2fe' : '#fef3c7',
+                                        color: st.status === 'SELESAI' ? '#15803d' : st.status === 'AKTIF' ? '#0369a1' : '#b45309'
+                                      }}
+                                    >
+                                      {st.status}
+                                    </span>
+                                  </div>
+                                  {st.article && (
+                                    <div style={{ fontSize: '11px', color: 'var(--color-graphite)', marginTop: '2px' }}>
+                                      Artikel: {st.article.title}
+                                    </div>
+                                  )}
+                                </div>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEditStageClick(st)}
+                                    style={{
+                                      backgroundColor: '#eff6ff',
+                                      color: '#2563eb',
+                                      border: 'none',
+                                      padding: '6px 12px',
+                                      borderRadius: '8px',
+                                      fontSize: '11px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteStage(st.id)}
+                                    style={{
+                                      backgroundColor: '#fee2e2',
+                                      color: '#ef4444',
+                                      border: 'none',
+                                      padding: '6px 12px',
+                                      borderRadius: '8px',
+                                      fontSize: '11px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Hapus
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -524,12 +841,32 @@ function Admin({ user, apiFetch, showToast }) {
                               </td>
                               <td>{c.currentStatus}</td>
                               <td>
-                                <button
-                                  onClick={() => handleDeleteCase(c.id)}
-                                  className="btn-delete-case flex-center"
-                                >
-                                  <Trash2 size={14} /> Nonaktifkan
-                                </button>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button
+                                    onClick={() => handleEditCaseClick(c)}
+                                    className="btn-edit-case flex-center"
+                                    style={{
+                                      display: 'inline-flex',
+                                      backgroundColor: '#eff6ff',
+                                      color: '#2563eb',
+                                      border: 'none',
+                                      padding: '6px 12px',
+                                      borderRadius: '8px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                      cursor: 'pointer',
+                                      gap: '4px'
+                                    }}
+                                  >
+                                    <Edit3 size={14} /> Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteCase(c.id)}
+                                    className="btn-delete-case flex-center"
+                                  >
+                                    <Trash2 size={14} /> Nonaktifkan
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -608,6 +945,89 @@ function Admin({ user, apiFetch, showToast }) {
                 Batal
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Edit Case Modal */}
+      {editingCase && (
+        <div className="modal-overlay flex-center">
+          <div className="modal-content card-shadow" style={{ maxWidth: '580px', width: '95%' }}>
+            <h3>Edit Kasus Hukum</h3>
+            <p>Perbarui rincian kasus hukum secara teliti.</p>
+            <form onSubmit={handleUpdateCase} className="mt-4">
+              <div className="form-group">
+                <label className="form-label">Nomor Perkara</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Misal: 120/Pid.B/2026/PN.Jkt"
+                  value={editCaseNumber}
+                  onChange={(e) => setEditCaseNumber(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Judul Kasus</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Misal: Kasus Dugaan Suap Pengadaan Bansos"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Klasifikasi / Kategori</label>
+                <select
+                  required
+                  value={editCategoryId}
+                  onChange={(e) => setEditCategoryId(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="">-- Pilih Kategori --</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Status Saat Ini</label>
+                <select
+                  value={editCurrentStatus}
+                  onChange={(e) => setEditCurrentStatus(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="PELAPORAN">Pelaporan</option>
+                  <option value="PENYIDIKAN">Penyidikan</option>
+                  <option value="PENUNTUTAN">Penuntutan</option>
+                  <option value="PERSIDANGAN">Persidangan</option>
+                  <option value="PUTUSAN">Putusan</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Deskripsi Kasus</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Uraikan ringkasan kasus hukum secara objektif..."
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="form-input"
+                ></textarea>
+              </div>
+              <div className="modal-actions mt-6">
+                <button type="submit" className="btn-primary">
+                  Simpan Perubahan
+                </button>
+                <button type="button" onClick={() => setEditingCase(null)} className="btn-secondary">
+                  Batal
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
