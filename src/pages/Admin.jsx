@@ -260,8 +260,14 @@ function Admin({ user, apiFetch, showToast }) {
                 ) : (
                   <div className="contributions-list-admin">
                     {contributions.map((ct) => {
-                      const proofFilesParsed = ct.proofFiles ? JSON.parse(ct.proofFiles) : [];
-                      const proofLinksParsed = ct.proofLinks ? JSON.parse(ct.proofLinks) : [];
+                      const parseJsonSafely = (val) => {
+                        if (typeof val === 'string') {
+                          try { return JSON.parse(val); } catch (e) { return []; }
+                        }
+                        return Array.isArray(val) ? val : [];
+                      };
+                      const proofFilesParsed = parseJsonSafely(ct.proofFiles);
+                      const proofLinksParsed = parseJsonSafely(ct.proofLinks);
 
                       return (
                         <div key={ct.id} className="contribution-row card-shadow">
