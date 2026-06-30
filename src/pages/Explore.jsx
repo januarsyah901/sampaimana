@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { Search, Download, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
-function Explore() {
+function Explore({ apiFetch, showToast }) {
   const [cases, setCases] = useState([]);
   const [categories, setCategories] = useState([]);
   const [totalCases, setTotalCases] = useState(0);
   
   // Search & Filter state
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -18,18 +19,28 @@ function Explore() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [search]);
+
   // Load cases
   useEffect(() => {
     setLoading(true);
     const queryParams = new URLSearchParams({
       page,
       limit,
-      search,
+      search: debouncedSearch,
       status: statusFilter,
       categoryId: categoryFilter
     });
 
-    fetch(`${API_BASE_URL}/cases?${queryParams}`)
+    apiFetch(`${API_BASE_URL}/cases?${queryParams}`)
       .then((res) => {
         if (!res.ok) throw new Error('Gagal mengambil daftar kasus');
         return res.json();
@@ -47,8 +58,11 @@ function Explore() {
         console.error(err);
         setError(err.message);
         setLoading(false);
+        if (showToast) {
+          showToast(err.message, 'error');
+        }
       });
-  }, [page, search, statusFilter, categoryFilter]);
+  }, [page, debouncedSearch, statusFilter, categoryFilter, apiFetch, showToast]);
 
   // Load categories once
   useEffect(() => {

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ShieldAlert, CheckCircle, XCircle, FileText, Trash2, Plus, Edit3, Settings, Shield, UserX } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
-function Admin({ user }) {
+function Admin({ user, apiFetch, showToast }) {
   const [activeTab, setActiveTab] = useState('contributions');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
 
   // Data states
   const [contributions, setContributions] = useState([]);
@@ -43,12 +41,9 @@ function Admin({ user }) {
     if (!token) return;
 
     setLoading(true);
-    setError(null);
 
     if (activeTab === 'contributions') {
-      fetch(`${API_BASE_URL}/admin/contributions`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      apiFetch(`${API_BASE_URL}/admin/contributions`)
         .then((res) => res.json())
         .then((res) => {
           if (res.success) setContributions(res.data);
@@ -60,7 +55,7 @@ function Admin({ user }) {
         });
     } else if (activeTab === 'cases') {
       // Load all cases
-      fetch(`${API_BASE_URL}/cases?limit=100`)
+      apiFetch(`${API_BASE_URL}/cases?limit=100`)
         .then((res) => res.json())
         .then((res) => {
           if (res.success) setCases(res.data.cases);
@@ -68,7 +63,7 @@ function Admin({ user }) {
         .catch(console.error);
 
       // Load categories
-      fetch(`${API_BASE_URL}/dashboard/stats`)
+      apiFetch(`${API_BASE_URL}/dashboard/stats`)
         .then((res) => res.json())
         .then((res) => {
           if (res.success) setCategories(res.data.byCategory);
@@ -79,9 +74,7 @@ function Admin({ user }) {
           setLoading(false);
         });
     } else if (activeTab === 'logs') {
-      fetch(`${API_BASE_URL}/admin/activity-logs`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      apiFetch(`${API_BASE_URL}/admin/activity-logs`)
         .then((res) => res.json())
         .then((res) => {
           if (res.success) setLogs(res.data);
@@ -95,13 +88,9 @@ function Admin({ user }) {
   };
 
   const handleVerifyContribution = (id, status, reason = '') => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    fetch(`${API_BASE_URL}/admin/contributions/${id}/verify`, {
+    apiFetch(`${API_BASE_URL}/admin/contributions/${id}/verify`, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ status, rejectionReason: reason })
@@ -109,7 +98,7 @@ function Admin({ user }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setSuccess(`Kontribusi berhasil ${status === 'APPROVED' ? 'disetujui' : 'ditolak'}`);
+          if (showToast) showToast(`Kontribusi berhasil ${status === 'APPROVED' ? 'disetujui' : 'ditolak'}`, 'success');
           setRejectingId(null);
           setRejectionReason('');
           loadData();
@@ -119,19 +108,15 @@ function Admin({ user }) {
       })
       .catch((err) => {
         console.error(err);
-        setError(err.message);
+        if (showToast) showToast(err.message, 'error');
       });
   };
 
   const handleCreateCase = (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    fetch(`${API_BASE_URL}/admin/cases`, {
+    apiFetch(`${API_BASE_URL}/admin/cases`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ caseNumber, title, description, categoryId, currentStatus })
@@ -139,7 +124,7 @@ function Admin({ user }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setSuccess('Kasus baru berhasil dibuat.');
+          if (showToast) showToast('Kasus baru berhasil dibuat.', 'success');
           setCaseNumber('');
           setTitle('');
           setDescription('');
@@ -151,23 +136,19 @@ function Admin({ user }) {
       })
       .catch((err) => {
         console.error(err);
-        setError(err.message);
+        if (showToast) showToast(err.message, 'error');
       });
   };
 
   const handleDeleteCase = (id) => {
     if (!window.confirm('Apakah Anda yakin ingin menonaktifkan/menghapus kasus ini?')) return;
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    fetch(`${API_BASE_URL}/admin/cases/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
+    apiFetch(`${API_BASE_URL}/admin/cases/${id}`, {
+      method: 'DELETE'
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setSuccess('Kasus berhasil dinonaktifkan.');
+          if (showToast) showToast('Kasus berhasil dinonaktifkan.', 'success');
           loadData();
         } else {
           throw new Error(res.message);
@@ -175,15 +156,12 @@ function Admin({ user }) {
       })
       .catch((err) => {
         console.error(err);
-        setError(err.message);
+        if (showToast) showToast(err.message, 'error');
       });
   };
 
   const handleCreateStage = (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
     const payload = {
       stageType,
       status: stageStatus,
@@ -193,10 +171,9 @@ function Admin({ user }) {
       attachments: articleAttachments ? articleAttachments.split(',').map(link => link.trim()) : undefined
     };
 
-    fetch(`${API_BASE_URL}/admin/cases/${selectedCaseForStage}/stages`, {
+    apiFetch(`${API_BASE_URL}/admin/cases/${selectedCaseForStage}/stages`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
@@ -204,7 +181,7 @@ function Admin({ user }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setSuccess('Tahapan perkara baru berhasil ditambahkan.');
+          if (showToast) showToast('Tahapan perkara baru berhasil ditambahkan.', 'success');
           setSelectedCaseForStage('');
           setArticleTitle('');
           setArticleContent('');
@@ -216,7 +193,7 @@ function Admin({ user }) {
       })
       .catch((err) => {
         console.error(err);
-        setError(err.message);
+        if (showToast) showToast(err.message, 'error');
       });
   };
 
@@ -261,19 +238,7 @@ function Admin({ user }) {
         </button>
       </div>
 
-      {/* Messages */}
-      {error && (
-        <div className="alert-message alert-error">
-          <ShieldAlert size={16} /> <span>{error}</span>
-          <button onClick={() => setError(null)} className="ml-auto close-alert">×</button>
-        </div>
-      )}
-      {success && (
-        <div className="alert-message alert-success">
-          <CheckCircle size={16} /> <span>{success}</span>
-          <button onClick={() => setSuccess(null)} className="ml-auto close-alert">×</button>
-        </div>
-      )}
+
 
       {/* Tab Content */}
       <div className="tab-content-panel">

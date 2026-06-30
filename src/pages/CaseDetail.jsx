@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, FileText, ArrowLeft, Download, ExternalLink, ChevronDown, ChevronUp, ShieldAlert } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
-function CaseDetail() {
+function CaseDetail({ apiFetch, showToast }) {
   const { id } = useParams();
   const [caseData, setCaseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +15,7 @@ function CaseDetail() {
   const [stageLoading, setStageLoading] = useState({});
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/cases/${id}`)
+    apiFetch(`${API_BASE_URL}/cases/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Kasus tidak ditemukan');
         return res.json();
@@ -33,7 +33,7 @@ function CaseDetail() {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, apiFetch]);
 
   const handleStageClick = (stageId) => {
     if (expandedStageId === stageId) {
@@ -47,7 +47,7 @@ function CaseDetail() {
     if (stageDetails[stageId]) return;
 
     setStageLoading((prev) => ({ ...prev, [stageId]: true }));
-    fetch(`${API_BASE_URL}/cases/${id}/stages/${stageId}`)
+    apiFetch(`${API_BASE_URL}/cases/${id}/stages/${stageId}`)
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
@@ -62,7 +62,7 @@ function CaseDetail() {
   };
 
   const handlePrint = () => {
-    fetch(`${API_BASE_URL}/cases/${id}/export/pdf`)
+    apiFetch(`${API_BASE_URL}/cases/${id}/export/pdf`)
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {

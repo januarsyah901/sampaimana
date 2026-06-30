@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, FileText, Globe, CheckCircle2, Clock, XCircle, AlertCircle, Upload } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
-function Contributor({ user }) {
+function Contributor({ user, apiFetch, showToast }) {
   const [contributions, setContributions] = useState([]);
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [submitError, setSubmitError] = useState(null);
-  const [submitSuccess, setSubmitSuccess] = useState(null);
 
   // Form states
   const [selectedCaseId, setSelectedCaseId] = useState('');
@@ -22,9 +19,7 @@ function Contributor({ user }) {
     if (!token) return;
 
     // Load contributor's own submissions
-    fetch(`${API_BASE_URL}/contributions/my`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    apiFetch(`${API_BASE_URL}/contributions/my`)
       .then((res) => {
         if (!res.ok) throw new Error('Gagal memuat kontribusi');
         return res.json();
@@ -37,7 +32,7 @@ function Contributor({ user }) {
       .catch((err) => console.error(err));
 
     // Load active cases for dropdown selection
-    fetch(`${API_BASE_URL}/cases?limit=100`)
+    apiFetch(`${API_BASE_URL}/cases?limit=100`)
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
@@ -49,7 +44,7 @@ function Contributor({ user }) {
         console.error(err);
         setLoading(false);
       });
-  }, []);
+  }, [apiFetch]);
 
   const handleAddLink = () => {
     setProofLinks([...proofLinks, '']);
@@ -85,12 +80,10 @@ function Contributor({ user }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitLoading(true);
-    setSubmitError(null);
-    setSubmitSuccess(null);
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setSubmitError('Sesi Anda telah kedaluwarsa. Silakan masuk kembali.');
+      if (showToast) showToast('Sesi Anda telah kedaluwarsa. Silakan masuk kembali.', 'error');
       setSubmitLoading(false);
       return;
     }
@@ -99,42 +92,26 @@ function Contributor({ user }) {
     formData.append('caseId', selectedCaseId);
     formData.append('description', description);
     
-    // Add links. If only one link is provided, to ensure the backend receives it as an array (Zod parsing),
-    // we can append it. Let's filter out empty links first.
     const filteredLinks = proofLinks.filter(link => link.trim() !== '');
     
-    if (filteredLinks.length === 0) {
-      // If empty, don't append or let it use default
-    } else if (filteredLinks.length === 1) {
-      // Backend expects a Zod array. In multipart/form-data, if we have a single item, we can
-      // append it twice or backend might fail. Let's see if we can append it as 'proofLinks'
-      formData.append('proofLinks', filteredLinks[0]);
-      // Append an empty string or dummy so it parses as array? No, the URL validator will fail on empty string.
-      // Wait, is there a workaround? Let's check: if we append it twice, it validates as array.
-      // But we don't want duplicate links. Let's hope the backend body-parser handles array query format
-      // Or we can just append it as 'proofLinks' and let's see. If the backend fails, we will show the error.
-    } else {
+    if (filteredLinks.length > 0) {
       filteredLinks.forEach(link => {
         formData.append('proofLinks', link);
       });
     }
 
-    // Add files
     proofFiles.forEach(file => {
       formData.append('proofFiles', file);
     });
 
-    fetch(`${API_BASE_URL}/contributions`, {
+    apiFetch(`${API_BASE_URL}/contributions`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
       body: formData
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setSubmitSuccess(res.message || 'Kontribusi Anda berhasil diajukan!');
+          if (showToast) showToast(res.message || 'Kontribusi Anda berhasil diajukan!', 'success');
           // Reset form
           setSelectedCaseId('');
           setDescription('');
@@ -142,9 +119,7 @@ function Contributor({ user }) {
           setProofFiles([]);
           
           // Refresh list
-          return fetch(`${API_BASE_URL}/contributions/my`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          return apiFetch(`${API_BASE_URL}/contributions/my`);
         } else {
           throw new Error(res.message || 'Gagal mengirim kontribusi');
         }
@@ -160,7 +135,7 @@ function Contributor({ user }) {
       })
       .catch((err) => {
         console.error(err);
-        setSubmitError(err.message || 'Terjadi kesalahan sistem.');
+        if (showToast) showToast(err.message || 'Terjadi kesalahan sistem.', 'error');
         setSubmitLoading(false);
       });
   };
@@ -194,17 +169,7 @@ function Contributor({ user }) {
           <h2>Ajukan Update Kasus</h2>
           <p className="card-subtitle">Kirim bukti berkas/link berita resmi mengenai perkembangan perkara.</p>
           
-          {submitError && (
-            <div className="alert-message alert-error">
-              <AlertCircle size={16} /> <span>{submitError}</span>
-            </div>
-          )}
 
-          {submitSuccess && (
-            <div className="alert-message alert-success">
-              <CheckCircle2 size={16} /> <span>{submitSuccess}</span>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="contribution-form">
             <div className="form-group">

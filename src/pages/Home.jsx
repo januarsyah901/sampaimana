@@ -3,6 +3,93 @@ import { Link } from 'react-router-dom';
 import { FileText, ArrowRight, Activity, Database, CheckCircle, TrendingUp } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
+function DonutChart({ statusCounts, total }) {
+  const statuses = Object.entries(statusCounts);
+  const colors = {
+    PELAPORAN: '#d97706',
+    PENYIDIKAN: '#0284c7',
+    PENUNTUTAN: '#9333ea',
+    PERSIDANGAN: '#16a34a',
+    PUTUSAN: '#db2777',
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'PELAPORAN': return 'Pelaporan';
+      case 'PENYIDIKAN': return 'Penyidikan';
+      case 'PENUNTUTAN': return 'Penuntutan';
+      case 'PERSIDANGAN': return 'Persidangan';
+      case 'PUTUSAN': return 'Putusan';
+      default: return status;
+    }
+  };
+
+  let accumulatedPercentage = 0;
+  const radius = 38;
+  const circumference = 2 * Math.PI * radius; // ~238.76
+
+  if (total === 0) {
+    return (
+      <div className="donut-chart-wrapper">
+        <svg width="140" height="140" viewBox="0 0 100 100" className="donut-chart-svg">
+          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#e5e7eb" strokeWidth="8" />
+          <text x="50" y="54" textAnchor="middle" fill="var(--color-graphite)" fontSize="10" fontWeight="600">Kosong</text>
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="donut-chart-wrapper">
+      <svg width="140" height="140" viewBox="0 0 100 100" className="donut-chart-svg">
+        <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#f3f4f6" strokeWidth="8" />
+        {statuses.map(([status, count]) => {
+          const percentage = count / total;
+          if (percentage === 0) return null;
+          
+          const strokeLength = percentage * circumference;
+          const strokeOffset = circumference - (accumulatedPercentage * circumference);
+          accumulatedPercentage += percentage;
+
+          return (
+            <circle
+              key={status}
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="transparent"
+              stroke={colors[status] || 'var(--color-rust)'}
+              strokeWidth="8"
+              strokeDasharray={`${strokeLength} ${circumference}`}
+              strokeDashoffset={-strokeOffset}
+              className="donut-segment"
+              style={{
+                transition: 'stroke-dashoffset 0.5s ease',
+                transformOrigin: '50px 50px',
+                transform: 'rotate(-90deg)'
+              }}
+            />
+          );
+        })}
+        <g className="donut-center-text">
+          <text x="50" y="47" textAnchor="middle" fill="var(--color-ink)" fontSize="16" fontWeight="700">{total}</text>
+          <text x="50" y="60" textAnchor="middle" fill="var(--color-graphite)" fontSize="7" fontWeight="600" letterSpacing="0.2px">TOTAL KASUS</text>
+        </g>
+      </svg>
+      
+      <div className="donut-legend">
+        {statuses.map(([status, count]) => (
+          <div key={status} className="legend-item">
+            <span className="legend-dot" style={{ backgroundColor: colors[status] }}></span>
+            <span className="legend-label">{getStatusLabel(status)}</span>
+            <span className="legend-count">{count}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -160,23 +247,7 @@ function Home() {
             <div className="visual-card warm-card">
               <h3>Tahapan Kasus</h3>
               <p className="card-subtitle">Distribusi tahapan hukum saat ini</p>
-              <div className="status-bars">
-                {Object.entries(stats.byStatus).map(([status, count]) => (
-                  <div key={status} className="bar-row">
-                    <span className="bar-label">{getStatusLabel(status)}</span>
-                    <div className="bar-container">
-                      <div 
-                        className="bar-fill" 
-                        style={{ 
-                          width: `${stats.totals.cases ? (count / stats.totals.cases) * 100 : 0}%`,
-                          backgroundColor: 'var(--color-rust)' 
-                        }}
-                      ></div>
-                    </div>
-                    <span className="bar-value">{count}</span>
-                  </div>
-                ))}
-              </div>
+              <DonutChart statusCounts={stats.byStatus} total={stats.totals.cases} />
             </div>
 
             {/* Cool Data Card - Sky Wash */}
@@ -569,6 +640,53 @@ function Home() {
           max-width: 400px;
         }
         .mt-4 { margin-top: 16px; }
+
+        /* Donut Chart styles */
+        .donut-chart-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          gap: 16px;
+          margin-top: 8px;
+          flex-wrap: wrap;
+        }
+        .donut-chart-svg {
+          flex-shrink: 0;
+        }
+        .donut-segment {
+          transition: stroke-dashoffset 0.4s ease;
+        }
+        .donut-legend {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex: 1;
+          min-width: 140px;
+        }
+        .legend-item {
+          display: flex;
+          align-items: center;
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--color-ink);
+        }
+        .legend-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          margin-right: 8px;
+          flex-shrink: 0;
+        }
+        .legend-label {
+          color: var(--color-ash);
+          text-transform: capitalize;
+          flex: 1;
+        }
+        .legend-count {
+          font-weight: 600;
+          color: var(--color-ink);
+          margin-left: 8px;
+        }
       `}</style>
     </div>
   );
