@@ -407,16 +407,7 @@ function Explore({ apiFetch, showToast }) {
           font-weight: 500;
           color: var(--color-graphite);
         }
-        .empty-state-card {
-          background-color: var(--color-pure-white);
-          padding: 64px 32px;
-          border-radius: var(--radius-cards);
-        }
-        .empty-state-card h3 {
-          font-family: var(--font-signifier);
-          font-size: 24px;
-          margin-bottom: 8px;
-        }
+
         .pagination-bar {
           display: flex;
           align-items: center;
