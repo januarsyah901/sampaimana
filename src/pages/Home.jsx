@@ -393,7 +393,15 @@ function Home({ apiFetch, showToast }) {
           padding: var(--card-padding);
           display: flex;
           flex-direction: column;
+          align-items: center;
+          text-align: center;
           position: relative;
+          border: 1px solid var(--color-fog);
+          box-shadow: none;
+          transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .stat-card:hover {
+          border-color: var(--color-ink);
         }
         .highlight-card-warm {
           background-color: var(--color-apricot-wash);
@@ -405,35 +413,44 @@ function Home({ apiFetch, showToast }) {
           border-radius: var(--radius-avatars);
           background-color: var(--surface-fog);
           color: var(--color-graphite);
-          margin-bottom: var(--spacing-16);
+          margin-bottom: var(--spacing-12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .stat-value {
-          font-size: 36px;
-          font-weight: 600;
+          font-size: 38px;
+          font-weight: 700;
           color: var(--color-ink);
           line-height: 1.1;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
+          letter-spacing: -0.02em;
         }
         .stat-label {
-          font-size: 14px;
+          font-size: 13px;
           color: var(--color-graphite);
-          font-weight: 500;
+          font-weight: 600;
+          letter-spacing: -0.01em;
         }
         .stat-delta {
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 4px;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 500;
-          margin-top: 12px;
+          margin-top: 10px;
+          width: 100%;
         }
         .stat-delta.positive {
           color: #10b981;
         }
         .stat-subtext {
-          font-size: 12px;
+          font-size: 11px;
           color: var(--color-ash);
-          margin-top: 12px;
+          margin-top: 10px;
+          text-align: center;
+          width: 100%;
         }
         .dashboard-grid {
           display: flex;
