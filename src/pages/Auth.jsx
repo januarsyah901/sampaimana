@@ -31,10 +31,9 @@ function Auth({ onLoginSuccess }) {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (res.success || res.token) {
-          // Both login/register might return tokens depending on BE implementation
-          const token = res.token || res.data?.token;
-          const refreshToken = res.refreshToken || res.data?.refreshToken;
+        if (res.success) {
+          const token = res.data?.accessToken;
+          const refreshToken = res.data?.refreshToken;
           
           if (token) {
             localStorage.setItem('token', token);
