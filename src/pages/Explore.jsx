@@ -225,7 +225,7 @@ function Explore({ apiFetch, showToast }) {
                     {c.category?.name || 'Umum'}
                   </span>
                   <Link to={`/cases/${c.id}`} className="btn-explore-case">
-                    Lihat Timeline →
+                    Lihat Detail
                   </Link>
                 </div>
               </div>

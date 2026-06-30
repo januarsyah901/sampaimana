@@ -301,16 +301,24 @@ function CaseDetail({ apiFetch, showToast }) {
                             <h4 className="article-title">{detail.article.title}</h4>
                             <p className="article-content">{detail.article.content}</p>
                             
-                            {/* Attachments if any */}
                             {detail.article.attachments && detail.article.attachments.length > 0 && (
                               <div className="attachments-section">
-                                <h5>Lampiran Bukti & Dokumen</h5>
+                                <h5>Link Berita & Dokumen Pendukung</h5>
                                 <div className="attachments-list">
-                                  {detail.article.attachments.map((link, idx) => (
-                                    <a key={idx} href={link} target="_blank" rel="noopener noreferrer" className="attachment-link">
-                                      <FileText size={14} /> Dokumen Pendukung #{idx + 1} <ExternalLink size={12} />
-                                    </a>
-                                  ))}
+                                  {detail.article.attachments.map((link, idx) => {
+                                    let label = "Link Berita / Sumber";
+                                    try {
+                                      const urlObj = new URL(link);
+                                      label = `Sumber: ${urlObj.hostname.replace('www.', '')}`;
+                                    } catch (e) {
+                                      label = `Link Sumber #${idx + 1}`;
+                                    }
+                                    return (
+                                      <a key={idx} href={link} target="_blank" rel="noopener noreferrer" className="attachment-link">
+                                        <FileText size={14} /> {label} <ExternalLink size={12} />
+                                      </a>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             )}
