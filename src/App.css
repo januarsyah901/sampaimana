@@ -1,0 +1,148 @@
+/* App-wide Layout Styles */
+
+.container {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-24);
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card Stack Shadow */
+.card-shadow {
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--color-fog);
+}
+
+/* Steep Filled Dark CTA */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-ink);
+  color: var(--color-pure-white);
+  font-family: var(--font-sohne);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: var(--radius-buttons);
+  border: none;
+  cursor: pointer;
+  letter-spacing: -0.009em;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Secondary Link Button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-ink);
+  font-family: var(--font-sohne);
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  background: none;
+  cursor: pointer;
+  letter-spacing: -0.009em;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  padding: 10px 16px;
+}
+
+.btn-secondary:hover {
+  opacity: 0.7;
+}
+
+/* Tag style */
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-tags);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  background-color: var(--surface-fog);
+  color: var(--color-ash);
+  border: 1px solid var(--color-dove);
+}
+
+/* Form Styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  margin-bottom: var(--spacing-20);
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ash);
+}
+
+.form-input {
+  font-family: var(--font-sohne);
+  font-size: 15px;
+  padding: 12px 16px;
+  border-radius: var(--radius-inputs);
+  border: 1px solid var(--color-dove);
+  outline: none;
+  transition: border-color 0.2s ease;
+  background-color: var(--color-pure-white);
+}
+
+.form-input:focus {
+  border-color: var(--color-ink);
+}
+
+/* Layout section gaps */
+.section-gap {
+  margin-top: var(--section-gap);
+  margin-bottom: var(--section-gap);
+}
+
+/* Top Nav and Layout structure */
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-canvas);
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* Status colors mapping for legal status */
+.status-badge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: var(--radius-tags);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pelaporan { background-color: #fef3c7; color: #d97706; }
+.status-penyidikan { background-color: #e0f2fe; color: #0284c7; }
+.status-penuntutan { background-color: #f3e8ff; color: #9333ea; }
+.status-persidangan { background-color: #dcfce7; color: #16a34a; }
+.status-putusan { background-color: #fce7f3; color: #db2777; }
