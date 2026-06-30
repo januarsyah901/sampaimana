@@ -206,10 +206,11 @@ function CaseDetail({ apiFetch, showToast }) {
         <Link to="/explore" className="btn-secondary">
           <ArrowLeft size={16} /> Kembali ke Daftar Kasus
         </Link>
-        <button onClick={handlePrint} className="btn-secondary ml-auto btn-print-pdf">
-          <Download size={14} /> Cetak Laporan (PDF)
-        </button>
       </div>
+
+      <button onClick={handlePrint} className="btn-print-float">
+        <Download size={18} />
+      </button>
 
       {/* Case Header & Details */}
       <section className="case-header-section card-shadow">
@@ -362,12 +363,30 @@ function CaseDetail({ apiFetch, showToast }) {
           align-items: center;
           margin-bottom: var(--spacing-24);
         }
-        .btn-print-pdf {
+        .btn-print-float {
+          position: fixed;
+          bottom: 32px;
+          right: 32px;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: var(--color-ink);
+          color: var(--color-pure-white);
+          border: none;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+          cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 6px;
-          border: 1px solid var(--color-dove);
-          background: white;
+          justify-content: center;
+          transition: transform 0.2s, box-shadow 0.2s;
+          z-index: 300;
+        }
+        .btn-print-float:hover {
+          transform: scale(1.06);
+          box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+        .btn-print-float:active {
+          transform: scale(0.96);
         }
         .case-header-section {
           background-color: var(--color-pure-white);
@@ -606,8 +625,11 @@ function CaseDetail({ apiFetch, showToast }) {
             align-items: stretch;
             gap: 12px;
           }
-          .btn-print-pdf {
-            width: 100%;
+          .btn-print-float {
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
           }
         }
       `}</style>

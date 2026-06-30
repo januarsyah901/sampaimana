@@ -52,7 +52,7 @@ function Navbar({ user, onLogout }) {
 
         <div className={`navbar-links ${mobileMenuOpen ? 'show' : ''}`}>
           <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-            Dashboard
+            Home
           </Link>
           <Link to="/explore" className={`nav-link ${isActive('/explore') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
             Telusuri Kasus
