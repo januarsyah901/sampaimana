@@ -614,20 +614,27 @@ function Admin({ user, apiFetch, showToast }) {
 
       <style>{`
         .admin-page {
-          padding-top: 48px;
-          padding-bottom: 96px;
+          padding-top: var(--spacing-40);
+          padding-bottom: var(--spacing-96);
         }
         .admin-header {
-          margin-bottom: var(--spacing-32);
+          margin-bottom: var(--spacing-40);
+        }
+        .admin-header h1 {
+          font-size: var(--text-heading-sm);
+          font-weight: 600;
+          color: var(--color-ink);
+          margin-bottom: 6px;
         }
         .subtitle {
           color: var(--color-ash);
+          font-size: 15px;
         }
         .admin-tabs {
           display: flex;
-          gap: 12px;
-          border-bottom: 1px solid var(--color-dove);
-          padding-bottom: 12px;
+          gap: 8px;
+          border-bottom: 1px solid var(--color-fog);
+          padding-bottom: var(--spacing-16);
           margin-bottom: var(--spacing-32);
           overflow-x: auto;
         }
@@ -637,17 +644,20 @@ function Admin({ user, apiFetch, showToast }) {
           gap: 8px;
           border: none;
           background: none;
-          padding: 8px 16px;
+          padding: 10px 20px;
           border-radius: var(--radius-buttons);
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-ash);
+          color: var(--color-graphite);
           cursor: pointer;
-          transition: background 0.2s, color 0.2s;
+          transition: background-color 0.2s, color 0.2s, transform 0.1s;
         }
         .tab-btn:hover {
           background-color: var(--surface-fog);
           color: var(--color-ink);
+        }
+        .tab-btn:active {
+          transform: scale(0.97);
         }
         .tab-btn.active {
           background-color: var(--color-ink);
@@ -661,7 +671,13 @@ function Admin({ user, apiFetch, showToast }) {
         .contribution-row {
           background: white;
           border-radius: var(--radius-cards);
-          padding: 24px;
+          padding: var(--spacing-28);
+          border: 1px solid var(--color-fog);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .contribution-row:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-subtle);
         }
         .row-header {
           display: flex;
@@ -669,36 +685,50 @@ function Admin({ user, apiFetch, showToast }) {
           align-items: center;
           font-size: 12px;
           color: var(--color-graphite);
-          margin-bottom: 8px;
+          margin-bottom: 12px;
           flex-wrap: wrap;
+          gap: 8px;
         }
         .contribution-row h4 {
-          font-size: 16px;
+          font-size: 17px;
           font-weight: 600;
+          color: var(--color-ink);
           margin-bottom: 8px;
         }
         .contribution-row .description {
           font-size: 14px;
           line-height: 1.5;
           color: var(--color-ash);
-          margin-bottom: 16px;
+          margin-bottom: var(--spacing-20);
           white-space: pre-wrap;
         }
         .attachments-block-admin {
           background-color: var(--surface-fog);
-          padding: 12px;
+          padding: var(--spacing-16);
           border-radius: 12px;
           font-size: 13px;
+          border: 1px solid var(--color-fog);
         }
         .attachments-block-admin h5 {
           font-weight: 600;
-          margin-bottom: 4px;
+          color: var(--color-ink);
+          margin-bottom: 6px;
         }
         .attachments-block-admin ul {
-          padding-left: 16px;
+          padding-left: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
         }
         .attachments-block-admin a {
           color: var(--color-rust);
+          text-decoration: none;
+          font-weight: 500;
+          transition: opacity 0.2s;
+        }
+        .attachments-block-admin a:hover {
+          opacity: 0.8;
+          text-decoration: underline;
         }
         .files-grid-admin {
           display: flex;
@@ -710,46 +740,86 @@ function Admin({ user, apiFetch, showToast }) {
           align-items: center;
           gap: 6px;
           background: white;
-          padding: 4px 10px;
-          border-radius: 6px;
+          padding: 6px 12px;
+          border-radius: 8px;
           border: 1px solid var(--color-dove);
           font-size: 12px;
           text-decoration: none;
           color: var(--color-ink);
+          font-weight: 500;
+          transition: border-color 0.2s, background-color 0.2s;
+        }
+        .file-chip:hover {
+          border-color: var(--color-ink);
+          background-color: var(--surface-fog);
         }
         .actions-row {
           display: flex;
           gap: 12px;
         }
         .btn-approve {
-          background-color: #10b981;
+          background-color: #16a34a;
+          color: white;
+          border: none;
+          border-radius: var(--radius-buttons);
+          padding: 8px 18px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-approve:hover {
+          opacity: 0.9;
+        }
+        .btn-approve:active {
+          transform: scale(0.97);
         }
         .btn-reject {
           color: #ef4444;
+          background-color: #fee2e2;
+          border: 1px solid transparent;
+          border-radius: var(--radius-buttons);
+          padding: 8px 18px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        }
+        .btn-reject:hover {
+          background-color: #fca5a5;
+          color: #b91c1c;
+        }
+        .btn-reject:active {
+          transform: scale(0.97);
         }
         .divider {
           border: 0;
-          border-top: 1px solid var(--color-dove);
-          opacity: 0.3;
+          border-top: 1px solid var(--color-fog);
+          margin: var(--spacing-20) 0;
         }
         .btn-delete-case {
           background-color: #fee2e2;
           color: #ef4444;
           border: none;
           padding: 6px 12px;
-          border-radius: 6px;
+          border-radius: 8px;
           font-size: 12px;
           font-weight: 600;
           cursor: pointer;
           gap: 4px;
+          transition: background-color 0.2s, color 0.2s;
         }
         .btn-delete-case:hover {
           background-color: #fca5a5;
+          color: #b91c1c;
         }
         .log-action {
           font-weight: 600;
           font-size: 13px;
           color: var(--color-rust);
+          background-color: var(--color-apricot-wash);
+          padding: 2px 6px;
+          border-radius: 4px;
         }
         /* Modal Overlay */
         .modal-overlay {
@@ -760,22 +830,28 @@ function Admin({ user, apiFetch, showToast }) {
           bottom: 0;
           background-color: rgba(23, 25, 28, 0.4);
           z-index: 200;
+          backdrop-filter: blur(4px);
+          animation: fadeIn 0.2s ease forwards;
         }
         .modal-content {
           background: white;
-          padding: 32px;
+          padding: var(--spacing-32);
           border-radius: var(--radius-cards);
           width: 90%;
-          max-width: 460px;
+          max-width: 480px;
+          border: 1px solid var(--color-fog);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         .modal-content h3 {
           font-family: var(--font-signifier);
           font-size: 22px;
+          color: var(--color-ink);
           margin-bottom: 8px;
         }
         .modal-content p {
           font-size: 13px;
-          color: var(--color-ash);
+          color: var(--color-graphite);
+          line-height: 1.45;
         }
         .modal-actions {
           display: flex;
@@ -784,6 +860,21 @@ function Admin({ user, apiFetch, showToast }) {
         }
         .btn-reject-confirm {
           background-color: #ef4444;
+          color: white;
+          border: none;
+          border-radius: var(--radius-buttons);
+          padding: 8px 18px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+        .btn-reject-confirm:hover {
+          opacity: 0.9;
+        }
+        .btn-reject-confirm:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
         .close-alert {
           background: none;
@@ -791,6 +882,48 @@ function Admin({ user, apiFetch, showToast }) {
           font-size: 18px;
           cursor: pointer;
           color: inherit;
+        }
+        /* Admin Form & Input Alignments */
+        .admin-page .form-input {
+          font-family: var(--font-sohne);
+          font-size: 15px;
+          padding: 12px 16px;
+          border-radius: var(--radius-inputs);
+          border: 1px solid var(--color-dove);
+          background-color: var(--color-pure-white);
+          outline: none;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .admin-page .form-input:focus {
+          border-color: var(--color-ink);
+          box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.08);
+        }
+        .admin-page select.form-input {
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23777b86' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          background-size: 16px;
+          padding-right: 40px;
+        }
+        /* Tables refinement */
+        .cases-table th {
+          background-color: var(--surface-fog);
+          padding: 16px 20px;
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--color-ink);
+          border-bottom: 1px solid var(--color-dove);
+        }
+        .cases-table td {
+          padding: 18px 20px;
+          border-bottom: 1px solid var(--color-fog);
+          font-size: 14px;
+          vertical-align: middle;
+        }
+        .cases-table tr:hover td {
+          background-color: rgba(23, 25, 28, 0.01);
         }
       `}</style>
     </div>

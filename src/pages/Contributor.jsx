@@ -36,7 +36,7 @@ function Contributor({ user, apiFetch, showToast }) {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setCases(res.data.cases);
+          setCases(res.data || []);
         }
         setLoading(false);
       })
@@ -312,14 +312,21 @@ function Contributor({ user, apiFetch, showToast }) {
 
       <style>{`
         .contributor-page {
-          padding-top: 48px;
-          padding-bottom: 96px;
+          padding-top: var(--spacing-40);
+          padding-bottom: var(--spacing-96);
         }
         .page-header {
-          margin-bottom: var(--spacing-32);
+          margin-bottom: var(--spacing-40);
+        }
+        .page-header h1 {
+          font-size: var(--text-heading-sm);
+          font-weight: 600;
+          color: var(--color-ink);
+          margin-bottom: 6px;
         }
         .subtitle {
           color: var(--color-ash);
+          font-size: 15px;
         }
         .contributor-grid {
           display: grid;
@@ -330,43 +337,52 @@ function Contributor({ user, apiFetch, showToast }) {
         .form-card {
           background-color: var(--color-pure-white);
           border-radius: var(--radius-cards);
-          padding: 32px;
+          padding: var(--spacing-32);
+          border: 1px solid var(--color-fog);
         }
         .form-card h2 {
           font-family: var(--font-signifier);
           font-size: 22px;
-          margin-bottom: 4px;
+          color: var(--color-ink);
+          margin-bottom: 6px;
+          font-weight: 500;
         }
         .card-subtitle {
           font-size: 13px;
           color: var(--color-graphite);
-          margin-bottom: var(--spacing-24);
+          margin-bottom: var(--spacing-28);
         }
-        .alert-message {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 12px 16px;
-          border-radius: 12px;
-          margin-bottom: var(--spacing-20);
-          font-size: 14px;
-          font-weight: 500;
-        }
-        .alert-error {
-          background-color: #fef2f2;
-          color: #ef4444;
-        }
-        .alert-success {
-          background-color: #f0fdf4;
-          color: #10b981;
-        }
-        .form-select, .form-textarea {
+        .form-select {
           width: 100%;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23777b86' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          background-size: 16px;
+          padding-right: 40px;
         }
         .form-textarea {
+          width: 100%;
           font-family: var(--font-sohne);
           font-size: 15px;
           resize: vertical;
+          min-height: 120px;
+          line-height: 1.45;
+        }
+        .form-input {
+          font-family: var(--font-sohne);
+          font-size: 15px;
+          padding: 12px 16px;
+          border-radius: var(--radius-inputs);
+          border: 1px solid var(--color-dove);
+          background-color: var(--color-pure-white);
+          outline: none;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus {
+          border-color: var(--color-ink);
+          box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.08);
         }
         .flex-between {
           display: flex;
@@ -383,12 +399,17 @@ function Contributor({ user, apiFetch, showToast }) {
           display: flex;
           align-items: center;
           gap: 4px;
+          transition: opacity 0.2s;
+        }
+        .btn-add-link:hover {
+          opacity: 0.8;
         }
         .link-input-row {
           display: flex;
           align-items: center;
           position: relative;
           margin-bottom: 8px;
+          animation: fadeIn 0.2s ease forwards;
         }
         .link-input-row .input-icon {
           position: absolute;
@@ -405,18 +426,26 @@ function Contributor({ user, apiFetch, showToast }) {
           cursor: pointer;
           color: #ef4444;
           padding: 8px 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.2s;
+        }
+        .btn-remove-link:hover {
+          color: #b91c1c;
         }
         .file-upload-zone {
           border: 2px dashed var(--color-dove);
           border-radius: var(--radius-inputs);
-          padding: 24px 16px;
+          padding: var(--spacing-24) var(--spacing-16);
           cursor: pointer;
           position: relative;
           background: var(--surface-fog);
-          transition: border-color 0.2s;
+          transition: border-color 0.2s, background-color 0.2s;
         }
         .file-upload-zone:hover {
           border-color: var(--color-ink);
+          background-color: rgba(23, 25, 28, 0.02);
         }
         .upload-icon {
           color: var(--color-graphite);
@@ -445,10 +474,11 @@ function Contributor({ user, apiFetch, showToast }) {
           display: flex;
           align-items: center;
           background-color: var(--surface-fog);
-          padding: 6px 12px;
-          border-radius: 8px;
+          padding: 8px 12px;
+          border-radius: 12px;
           font-size: 13px;
           border: 1px solid var(--color-fog);
+          animation: fadeIn 0.2s ease forwards;
         }
         .file-name {
           font-weight: 500;
@@ -469,17 +499,26 @@ function Contributor({ user, apiFetch, showToast }) {
           cursor: pointer;
           color: #ef4444;
           margin-left: auto;
+          display: flex;
+          align-items: center;
+          transition: color 0.2s;
+        }
+        .btn-remove-file:hover {
+          color: #b91c1c;
         }
         .history-column h2 {
           font-family: var(--font-signifier);
           font-size: 22px;
+          color: var(--color-ink);
           margin-bottom: var(--spacing-24);
+          font-weight: 500;
         }
         .empty-history {
           background: white;
-          padding: 40px;
+          padding: var(--spacing-40);
           border-radius: var(--radius-cards);
           color: var(--color-ash);
+          border: 1px solid var(--color-fog);
         }
         .contributions-list {
           display: flex;
@@ -488,28 +527,53 @@ function Contributor({ user, apiFetch, showToast }) {
         }
         .contribution-card {
           background: white;
-          border-radius: 20px;
-          padding: 20px;
+          border-radius: var(--radius-cards);
+          padding: var(--spacing-24);
+          border: 1px solid var(--color-fog);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .contribution-card:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-subtle);
         }
         .contribution-card .card-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 8px;
+          margin-bottom: 12px;
+        }
+        .case-num {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--color-graphite);
+          background-color: var(--surface-fog);
+          padding: 3px 8px;
+          border-radius: 6px;
         }
         .status-badge-inline {
           display: inline-flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
           font-size: 12px;
           font-weight: 600;
+          padding: 4px 10px;
+          border-radius: var(--radius-tags);
         }
-        .text-green { color: #10b981; }
-        .text-red { color: #ef4444; }
-        .text-orange { color: #f59e0b; }
+        .status-badge-inline.status-approved {
+          background-color: #dcfce7;
+          color: #16a34a;
+        }
+        .status-badge-inline.status-rejected {
+          background-color: #fee2e2;
+          color: #ef4444;
+        }
+        .status-badge-inline.status-pending {
+          background-color: #fef3c7;
+          color: #d97706;
+        }
         
         .contribution-card .case-title {
-          font-size: 15px;
+          font-size: 16px;
           font-weight: 600;
           color: var(--color-ink);
           margin-bottom: 8px;
@@ -517,27 +581,30 @@ function Contributor({ user, apiFetch, showToast }) {
         .contribution-card .description {
           font-size: 14px;
           color: var(--color-ash);
-          line-height: 1.45;
-          margin-bottom: 12px;
+          line-height: 1.5;
+          margin-bottom: var(--spacing-16);
           white-space: pre-wrap;
         }
         .rejection-block {
           background-color: #fef2f2;
           color: #b91c1c;
-          padding: 8px 12px;
-          border-radius: 8px;
+          padding: 10px 14px;
+          border-radius: 12px;
           font-size: 13px;
-          margin-bottom: 12px;
+          margin-bottom: var(--spacing-16);
+          border-left: 3px solid #ef4444;
+          line-height: 1.45;
         }
         .contribution-card .card-footer {
           font-size: 11px;
           color: var(--color-graphite);
           border-top: 1px solid var(--surface-fog);
-          padding-top: 8px;
+          padding-top: 12px;
         }
         @media (max-width: 1024px) {
           .contributor-grid {
             grid-template-columns: 1fr;
+            gap: var(--spacing-24);
           }
         }
       `}</style>
