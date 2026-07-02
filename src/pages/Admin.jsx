@@ -471,8 +471,12 @@ function Admin({ user, apiFetch, showToast }) {
       {/* Tab Content */}
       <div className="tab-content-panel">
         {loading ? (
-          <div className="flex-center py-8">
-            <div className="loading-spinner"></div>
+          <div className="admin-loading">
+            <div className="skeleton skeleton-title" style={{ width: '40%', marginBottom: '24px' }}></div>
+            <div className="skeleton" style={{ height: '52px', marginBottom: '12px', borderRadius: '12px' }}></div>
+            <div className="skeleton" style={{ height: '52px', marginBottom: '12px', borderRadius: '12px' }}></div>
+            <div className="skeleton" style={{ height: '52px', marginBottom: '12px', borderRadius: '12px' }}></div>
+            <div className="skeleton" style={{ height: '52px', borderRadius: '12px' }}></div>
           </div>
         ) : (
           <>
@@ -1117,6 +1121,11 @@ function Admin({ user, apiFetch, showToast }) {
         }
         .admin-header {
           margin-bottom: var(--spacing-40);
+          animation: fadeInUp 0.5s var(--ease-out) forwards;
+        }
+        .admin-loading {
+          padding: var(--spacing-24) 0;
+          animation: fadeIn 0.3s ease forwards;
         }
         .admin-header h1 {
           font-size: var(--text-heading-sm);

@@ -145,24 +145,30 @@ function CaseDetail({ apiFetch, showToast }) {
           <div className="skeleton" style={{ width: '160px', height: '36px', borderRadius: '9999px' }}></div>
         </div>
 
-        <section className="case-header-section card-shadow">
-          <div className="skeleton skeleton-text" style={{ width: '30%', marginBottom: '16px' }}></div>
-          <div className="skeleton skeleton-title" style={{ width: '70%', height: '40px' }}></div>
-          <div className="skeleton skeleton-text" style={{ width: '90%' }}></div>
-          <div className="skeleton skeleton-text" style={{ width: '85%' }}></div>
-          <div className="skeleton skeleton-text" style={{ width: '60%' }}></div>
+        <section className="case-header-section card-shadow" style={{ padding: '32px' }}>
+          <div className="skeleton skeleton-text-sm" style={{ width: '25%' }}></div>
+          <div className="skeleton skeleton-title" style={{ width: '100%', height: '36px', marginBottom: '20px' }}></div>
+          <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph-medium"></div>
+          <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph" style={{ marginTop: '8px' }}></div>
+          <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph-short" style={{ marginTop: '8px' }}></div>
         </section>
 
         <section className="timeline-section">
-          <div className="skeleton skeleton-title" style={{ width: '250px' }}></div>
+          <div className="skeleton skeleton-title" style={{ width: '35%' }}></div>
           <div className="timeline-container">
-            <div className="timeline-item">
-              <div className="timeline-marker-wrapper"><div className="timeline-marker skeleton"></div><div className="timeline-line"></div></div>
-              <div className="timeline-content-card card-shadow skeleton" style={{ height: '72px', flex: 1, marginBottom: '24px' }}></div>
+            <div className="timeline-item" style={{ marginTop: '24px' }}>
+              <div className="timeline-marker-wrapper">
+                <div className="skeleton skeleton-avatar" style={{ width: '14px', height: '14px', borderRadius: '50%' }}></div>
+                <div className="timeline-line skeleton" style={{ height: '100px', borderRadius: '1px', marginTop: '8px', background: 'linear-gradient(180deg, #f3f4f6 0%, #f9fafb 100%)' }}></div>
+              </div>
+              <div className="skeleton" style={{ height: '68px', borderRadius: 'var(--radius-cards)', flex: 1, marginBottom: '24px' }}></div>
             </div>
             <div className="timeline-item">
-              <div className="timeline-marker-wrapper"><div className="timeline-marker skeleton"></div></div>
-              <div className="timeline-content-card card-shadow skeleton" style={{ height: '72px', flex: 1 }}></div>
+              <div className="timeline-marker-wrapper">
+                <div className="skeleton skeleton-avatar" style={{ width: '14px', height: '14px', borderRadius: '50%' }}></div>
+                <div className="timeline-line skeleton" style={{ height: '100px', borderRadius: '1px', marginTop: '8px', background: 'linear-gradient(180deg, #f3f4f6 0%, #f9fafb 100%)' }}></div>
+              </div>
+              <div className="skeleton" style={{ height: '68px', borderRadius: 'var(--radius-cards)', flex: 1 }}></div>
             </div>
           </div>
         </section>

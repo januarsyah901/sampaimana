@@ -186,9 +186,9 @@ function Explore({ apiFetch, showToast }) {
       {/* Grid Cases */}
       {loading ? (
         <div className="cases-grid">
-          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
-          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
-          <div className="case-card card-shadow skeleton skeleton-card" style={{ height: '220px' }}></div>
+          <div className="case-card card-shadow skeleton skeleton-card-full" style={{ height: '220px' }}></div>
+          <div className="case-card card-shadow skeleton skeleton-card-full" style={{ height: '220px' }}></div>
+          <div className="case-card card-shadow skeleton skeleton-card-full" style={{ height: '220px' }}></div>
         </div>
       ) : error ? (
         <div className="error-card card-shadow mt-4">

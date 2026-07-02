@@ -268,8 +268,10 @@ function Contributor({ user, apiFetch, showToast }) {
           <h2>Riwayat Kontribusi Anda</h2>
           
           {loading ? (
-            <div className="flex-center py-8">
-              <div className="loading-spinner"></div>
+            <div className="loading-history">
+              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)', marginBottom: '16px' }}></div>
+              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)', marginBottom: '16px' }}></div>
+              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)' }}></div>
             </div>
           ) : contributions.length === 0 ? (
             <div className="empty-history card-shadow text-center">
@@ -523,6 +525,22 @@ function Contributor({ user, apiFetch, showToast }) {
           color: var(--color-ink);
           margin-bottom: var(--spacing-24);
           font-weight: 500;
+          animation: fadeInUp 0.5s var(--ease-out) 0.1s forwards;
+          opacity: 0;
+        }
+        .loading-history {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .empty-history {
+          background: white;
+          padding: var(--spacing-40);
+          border-radius: var(--radius-cards);
+          color: var(--color-ash);
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          animation: fadeIn 0.3s ease forwards;
         }
         .empty-history {
           background: white;

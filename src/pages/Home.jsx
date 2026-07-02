@@ -235,7 +235,7 @@ function Home({ apiFetch, showToast }) {
       <section className="recent-cases-section container">
         <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>
         {loading || !stats ? (
-          <div className="skeleton skeleton-card" style={{ height: '240px', borderRadius: 'var(--radius-cards)' }}></div>
+          <div className="skeleton skeleton-card-full" style={{ height: '240px' }}></div>
         ) : (
           <>
             <div className="section-header" style={{ marginBottom: '20px' }}>
@@ -307,8 +307,8 @@ function Home({ apiFetch, showToast }) {
       {loading || !stats ? (
         <section className="dashboard-grid container">
           <div className="grid-2-col">
-            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
-            <div className="visual-card card-shadow skeleton skeleton-card" style={{ height: '280px' }}></div>
+            <div className="visual-card card-shadow skeleton skeleton-card-full" style={{ height: '280px' }}></div>
+            <div className="visual-card card-shadow skeleton skeleton-card-full" style={{ height: '280px' }}></div>
           </div>
         </section>
       ) : (
@@ -344,9 +344,9 @@ function Home({ apiFetch, showToast }) {
       <section className="stats-section container" style={{ marginTop: '40px', marginBottom: '80px' }}>
         {loading || !stats ? (
           <div className="stats-grid">
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
-            <div className="stat-card card-shadow skeleton skeleton-card"></div>
+            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
+            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
+            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
           </div>
         ) : (
           <div className="stats-grid">
