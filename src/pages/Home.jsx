@@ -233,12 +233,11 @@ function Home({ apiFetch, showToast }) {
 
       {/* Recent Cases Section — right below hero */}
       <section className="recent-cases-section container">
-        <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>
         {loading || !stats ? (
           <div className="skeleton skeleton-card-full" style={{ height: '240px' }}></div>
         ) : (
           <>
-            <div className="section-header" style={{ marginBottom: '20px' }}>
+            <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>
               <h2 className="section-title">Kasus Terbaru</h2>
               <Link to="/explore" className="btn-secondary">
                 Lihat Semua <ArrowRight size={14} />
