@@ -338,7 +338,18 @@ function Contributor({ user, apiFetch, showToast }) {
           background-color: var(--color-pure-white);
           border-radius: var(--radius-cards);
           padding: var(--spacing-32);
-          border: 1px solid var(--color-fog);
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          animation: fadeInUp 0.5s var(--ease-out) forwards;
+        }
+        .history-column h2 {
+          font-family: var(--font-signifier);
+          font-size: 22px;
+          color: var(--color-ink);
+          margin-bottom: var(--spacing-24);
+          font-weight: 500;
+          animation: fadeInUp 0.5s var(--ease-out) 0.15s forwards;
+          opacity: 0;
         }
         .form-card h2 {
           font-family: var(--font-signifier);
@@ -529,12 +540,18 @@ function Contributor({ user, apiFetch, showToast }) {
           background: white;
           border-radius: var(--radius-cards);
           padding: var(--spacing-24);
-          border: 1px solid var(--color-fog);
-          transition: transform 0.2s, box-shadow 0.2s;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          transition: transform 0.25s var(--ease-out), box-shadow 0.3s var(--ease-out);
+          animation: fadeInUp 0.4s var(--ease-out) forwards;
+          opacity: 0;
         }
+        .contribution-card:nth-child(1) { animation-delay: 0ms; }
+        .contribution-card:nth-child(2) { animation-delay: 60ms; }
+        .contribution-card:nth-child(3) { animation-delay: 120ms; }
         .contribution-card:hover {
           transform: translateY(-2px);
-          box-shadow: var(--shadow-subtle);
+          box-shadow: var(--shadow-md);
         }
         .contribution-card .card-header {
           display: flex;

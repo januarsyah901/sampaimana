@@ -15,8 +15,13 @@
 
 /* Card Stack Shadow */
 .card-shadow {
-  box-shadow: var(--shadow-subtle);
-  border: 1px solid var(--color-fog);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: box-shadow var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
+}
+
+.card-shadow:hover {
+  box-shadow: var(--shadow-md);
 }
 
 /* Steep Filled Dark CTA */
@@ -34,16 +39,17 @@
   border: none;
   cursor: pointer;
   letter-spacing: -0.009em;
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease, box-shadow var(--duration-normal) var(--ease-out);
   text-decoration: none;
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  opacity: 0.85;
+  box-shadow: 0 4px 12px rgba(23, 25, 28, 0.2);
 }
 
 .btn-primary:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .btn-primary:disabled {
@@ -63,16 +69,16 @@
   font-weight: 500;
   padding: 8px 18px;
   border-radius: var(--radius-buttons); /* 9999px */
-  border: 1px solid var(--color-dove);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   letter-spacing: -0.009em;
   text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease, opacity var(--duration-fast) ease, box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-dove);
-  border-color: var(--color-graphite);
+  background-color: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 /* Explore Case Action Button (Global Style) */
@@ -80,21 +86,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-fog);
+  background-color: var(--surface-fog);
   color: var(--color-ink);
   font-family: var(--font-sohne);
   font-size: 13px;
   font-weight: 500;
   padding: 6px 14px;
   border-radius: var(--radius-buttons); /* 9999px */
-  border: 1px solid var(--color-dove);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   text-decoration: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease;
 }
 
 .btn-explore-case:hover {
-  background-color: var(--color-dove);
-  border-color: var(--color-graphite);
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 /* Tag style */
@@ -107,7 +113,7 @@
   font-weight: 500;
   background-color: var(--surface-fog);
   color: var(--color-ash);
-  border: 1px solid var(--color-dove);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Form Styles */
@@ -129,14 +135,15 @@
   font-size: 15px;
   padding: 12px 16px;
   border-radius: var(--radius-inputs);
-  border: 1px solid var(--color-dove);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-normal) var(--ease-out);
   background-color: var(--color-pure-white);
 }
 
 .form-input:focus {
   border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.06);
 }
 
 /* Layout section gaps */
@@ -150,7 +157,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--surface-canvas);
+  background-color: var(--surface-page);
 }
 
 .main-content {
@@ -237,9 +244,9 @@
 .toast-notification {
   pointer-events: auto;
   background-color: var(--color-pure-white);
-  border: 1px solid var(--color-dove);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--radius-inputs);
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-lg);
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -247,7 +254,7 @@
   gap: 16px;
   min-width: 320px;
   max-width: 420px;
-  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: toastSlideIn 0.35s var(--ease-out) forwards;
 }
 
 .toast-content {
@@ -273,7 +280,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, color 0.2s;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
 }
 
 .toast-close-btn:hover {
@@ -292,11 +299,11 @@
 @keyframes toastSlideIn {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -395,6 +402,7 @@
   justify-content: center;
   text-align: center;
   margin: 24px auto;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .empty-state-card h3 {
@@ -432,6 +440,7 @@
   background-color: var(--color-pure-white);
   border-radius: var(--radius-cards); /* 24px */
   padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .form-card h3 {
@@ -447,7 +456,7 @@
   background-color: var(--color-pure-white);
   border-radius: var(--radius-cards); /* 24px */
   overflow: hidden;
-  border: 1px solid var(--color-fog);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .cases-table-wrapper, .logs-table-wrapper {
@@ -466,12 +475,12 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--color-graphite);
-  border-bottom: 1px solid var(--color-dove);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .cases-table td {
   padding: 16px 20px;
-  border-bottom: 1px solid var(--color-fog);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
   font-size: 14px;
 }
 

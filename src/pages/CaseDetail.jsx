@@ -404,6 +404,9 @@ function CaseDetail({ apiFetch, showToast }) {
           border-radius: var(--radius-cards);
           padding: 32px;
           margin-bottom: var(--spacing-40);
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          animation: fadeInUp 0.5s var(--ease-out) forwards;
         }
         .case-meta-top {
           display: flex;
@@ -474,6 +477,8 @@ function CaseDetail({ apiFetch, showToast }) {
         }
         .timeline-section {
           margin-top: var(--spacing-40);
+          animation: fadeInUp 0.5s var(--ease-out) 0.15s forwards;
+          opacity: 0;
         }
         .timeline-container {
           display: flex;
@@ -500,10 +505,12 @@ function CaseDetail({ apiFetch, showToast }) {
           border: 2px solid var(--color-pure-white);
           z-index: 2;
           margin-top: 24px;
+          transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s var(--ease-spring);
         }
         .stage-active .timeline-marker {
           background-color: var(--color-rust);
           box-shadow: 0 0 0 4px var(--color-apricot-wash);
+          animation: pulse-glow 2s ease-in-out infinite;
         }
         .stage-completed .timeline-marker {
           background-color: var(--color-ink);
@@ -511,8 +518,9 @@ function CaseDetail({ apiFetch, showToast }) {
         .timeline-line {
           width: 2px;
           flex: 1;
-          background-color: var(--surface-fog);
+          background-color: rgba(0, 0, 0, 0.06);
           min-height: 80px;
+          transition: background-color 0.3s ease;
         }
         .timeline-content-card {
           flex: 1;
@@ -520,6 +528,14 @@ function CaseDetail({ apiFetch, showToast }) {
           border-radius: var(--radius-cards);
           margin-bottom: 24px;
           overflow: hidden;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          transition: box-shadow 0.3s var(--ease-out), transform 0.25s var(--ease-out);
+          animation: fadeInUp 0.4s var(--ease-out) forwards;
+          opacity: 0;
+        }
+        .timeline-content-card:hover {
+          box-shadow: var(--shadow-md);
         }
         .timeline-card-header {
           padding: 20px;
@@ -527,6 +543,10 @@ function CaseDetail({ apiFetch, showToast }) {
           align-items: center;
           justify-content: space-between;
           cursor: pointer;
+          transition: background 0.2s ease;
+        }
+        .timeline-card-header:hover {
+          background: rgba(0, 0, 0, 0.01);
         }
         .stage-info {
           display: flex;
@@ -542,7 +562,7 @@ function CaseDetail({ apiFetch, showToast }) {
         .status-dot-pending { background-color: var(--color-dove); }
         .status-dot-aktif { background-color: #f59e0b; }
         .status-dot-selesai { background-color: #10b981; }
-        
+
         .stage-type {
           font-size: 16px;
           font-weight: 600;
@@ -554,8 +574,9 @@ function CaseDetail({ apiFetch, showToast }) {
         }
         .stage-article-detail {
           padding: 0 20px 20px;
-          border-top: 1px solid var(--surface-fog);
+          border-top: 1px solid rgba(0, 0, 0, 0.04);
           background-color: var(--surface-fog);
+          animation: fadeInScale 0.3s var(--ease-out) forwards;
         }
         .article-body {
           padding-top: 20px;

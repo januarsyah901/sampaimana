@@ -201,10 +201,21 @@ function Home({ apiFetch, showToast }) {
       {/* Hero Section - Always Visible Instantly */}
       <section className="hero-section">
         <div className="hero-glow"></div>
+        <div className="hero-glow-secondary"></div>
+        <div className="hero-particles">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="particle" style={{
+              left: `${15 + i * 15}%`,
+              top: `${20 + (i % 3) * 20}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${4 + i * 0.7}s`,
+            }}></div>
+          ))}
+        </div>
         <div className="container hero-container">
           <h1 className="hero-title font-display">
             Pantau Kasus Hukum <br />
-            <span>Sampai Mana</span> Sebenarnya.
+            <span className="text-rust">Sampai Mana</span> Sebenarnya.
           </h1>
           <p className="hero-subtitle">
             Platform transparansi hukum crowdsourced. Melacak setiap tahapan proses hukum publik dari Pelaporan hingga Putusan pengadilan secara terbuka dan akuntabel.
@@ -222,6 +233,7 @@ function Home({ apiFetch, showToast }) {
 
       {/* Recent Cases Section — right below hero */}
       <section className="recent-cases-section container">
+        <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>
         {loading || !stats ? (
           <div className="skeleton skeleton-card" style={{ height: '240px', borderRadius: 'var(--radius-cards)' }}></div>
         ) : (
@@ -362,8 +374,8 @@ function Home({ apiFetch, showToast }) {
         }
         .hero-section {
           position: relative;
-          background-color: var(--surface-canvas);
-          padding: 96px 0 64px;
+          background: linear-gradient(180deg, var(--surface-canvas) 0%, var(--surface-page) 100%);
+          padding: 100px 0 80px;
           overflow: hidden;
           text-align: center;
         }
@@ -372,12 +384,41 @@ function Home({ apiFetch, showToast }) {
           top: -200px;
           left: 50%;
           transform: translateX(-50%);
-          width: 600px;
-          height: 600px;
+          width: 700px;
+          height: 700px;
           background: radial-gradient(circle, var(--color-apricot-wash) 0%, rgba(255,255,255,0) 70%);
-          opacity: 0.45;
+          opacity: 0.5;
           z-index: 1;
           pointer-events: none;
+          animation: pulse-glow 6s ease-in-out infinite;
+        }
+        .hero-glow-secondary {
+          position: absolute;
+          bottom: -150px;
+          right: -100px;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, var(--color-sky-wash) 0%, rgba(255,255,255,0) 70%);
+          opacity: 0.35;
+          z-index: 1;
+          pointer-events: none;
+          animation: pulse-glow 8s ease-in-out infinite reverse;
+        }
+        .hero-particles {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        .particle {
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--color-apricot-wash);
+          opacity: 0.3;
+          animation: float 6s ease-in-out infinite;
         }
         .hero-container {
           position: relative;
@@ -390,25 +431,36 @@ function Home({ apiFetch, showToast }) {
           letter-spacing: var(--tracking-heading-lg);
           color: var(--color-ink);
           margin-bottom: var(--spacing-20);
+          animation: fadeInUp 0.7s var(--ease-out) forwards;
+          opacity: 0;
         }
         .hero-title span {
           color: var(--color-rust);
+        }
+        .hero-title span.text-rust {
+          color: var(--color-rust);
+          position: relative;
+          display: inline;
         }
         .hero-subtitle {
           font-size: var(--text-body-lg);
           line-height: var(--leading-body-lg);
           color: var(--color-ash);
           margin-bottom: var(--spacing-32);
+          animation: fadeInUp 0.7s var(--ease-out) 0.15s forwards;
+          opacity: 0;
         }
         .hero-actions {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: var(--spacing-16);
+          animation: fadeInUp 0.7s var(--ease-out) 0.3s forwards;
+          opacity: 0;
         }
         .arrow-icon {
           margin-left: 6px;
-          transition: transform 0.2s;
+          transition: transform var(--duration-fast) ease;
         }
         .btn-secondary:hover .arrow-icon {
           transform: translateX(4px);
@@ -424,27 +476,35 @@ function Home({ apiFetch, showToast }) {
         .stat-card {
           background-color: var(--surface-card);
           border-radius: var(--radius-cards);
-          padding: 20px 24px;
+          padding: 24px 24px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           text-align: center;
           position: relative;
-          border: 1px solid var(--color-fog);
-          box-shadow: none;
-          transition: border-color 0.2s ease, background-color 0.2s ease;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.3s var(--ease-out);
+          animation: fadeInUp 0.5s var(--ease-out) forwards;
+          opacity: 0;
         }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
         .stat-card:hover {
-          border-color: var(--color-ink);
+          transform: translateY(-2px);
+          border-color: rgba(0, 0, 0, 0.08);
+          box-shadow: var(--shadow-md);
         }
         .stat-value {
-          font-size: 38px;
+          font-size: 42px;
           font-weight: 700;
           color: var(--color-ink);
           line-height: 1.1;
           margin-bottom: 6px;
           letter-spacing: -0.02em;
+          font-variant-numeric: tabular-nums;
         }
         .stat-label {
           font-size: 13px;

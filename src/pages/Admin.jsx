@@ -1131,7 +1131,7 @@ function Admin({ user, apiFetch, showToast }) {
         .admin-tabs {
           display: flex;
           gap: 8px;
-          border-bottom: 1px solid var(--color-fog);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
           padding-bottom: var(--spacing-16);
           margin-bottom: var(--spacing-32);
           overflow-x: auto;
@@ -1148,7 +1148,8 @@ function Admin({ user, apiFetch, showToast }) {
           font-weight: 600;
           color: var(--color-graphite);
           cursor: pointer;
-          transition: background-color 0.2s, color 0.2s, transform 0.1s;
+          transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, transform var(--duration-fast) ease;
+          white-space: nowrap;
         }
         .tab-btn:hover {
           background-color: var(--surface-fog);
@@ -1170,12 +1171,18 @@ function Admin({ user, apiFetch, showToast }) {
           background: white;
           border-radius: var(--radius-cards);
           padding: var(--spacing-28);
-          border: 1px solid var(--color-fog);
-          transition: transform 0.2s, box-shadow 0.2s;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          transition: transform 0.25s var(--ease-out), box-shadow 0.3s var(--ease-out);
+          animation: fadeInUp 0.4s var(--ease-out) forwards;
+          opacity: 0;
         }
+        .contribution-row:nth-child(1) { animation-delay: 0ms; }
+        .contribution-row:nth-child(2) { animation-delay: 60ms; }
+        .contribution-row:nth-child(3) { animation-delay: 120ms; }
         .contribution-row:hover {
           transform: translateY(-2px);
-          box-shadow: var(--shadow-subtle);
+          box-shadow: var(--shadow-md);
         }
         .row-header {
           display: flex;
@@ -1326,10 +1333,11 @@ function Admin({ user, apiFetch, showToast }) {
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgba(23, 25, 28, 0.4);
+          background-color: rgba(23, 25, 28, 0.5);
           z-index: 200;
-          backdrop-filter: blur(4px);
-          animation: fadeIn 0.2s ease forwards;
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          animation: fadeIn 0.25s ease forwards;
         }
         .modal-content {
           background: white;
@@ -1337,8 +1345,10 @@ function Admin({ user, apiFetch, showToast }) {
           border-radius: var(--radius-cards);
           width: 90%;
           max-width: 480px;
-          border: 1px solid var(--color-fog);
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow: var(--shadow-elevated);
+          animation: scale-in 0.3s var(--ease-spring) forwards;
+          opacity: 0;
         }
         .modal-content h3 {
           font-family: var(--font-signifier);

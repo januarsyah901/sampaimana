@@ -148,45 +148,60 @@ function Auth({ onLoginSuccess }) {
 
       <style>{`
         .auth-page {
-          min-height: calc(100vh - 68px);
-          padding: 40px 0;
+          min-height: 100vh;
+          padding: 0;
+          background: linear-gradient(135deg, var(--surface-page) 0%, var(--surface-canvas) 100%);
         }
         .auth-card {
           background-color: var(--color-pure-white);
           border-radius: var(--radius-cards);
           width: 100%;
           max-width: 440px;
-          padding: 40px 32px;
+          padding: 40px 36px;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-lg);
+          animation: scale-in 0.4s var(--ease-spring) forwards;
+          opacity: 0;
         }
         .auth-header {
-          margin-bottom: 24px;
+          margin-bottom: 28px;
+          text-align: center;
         }
         .auth-icon-wrapper {
-          width: 56px;
-          height: 56px;
+          width: 60px;
+          height: 60px;
           border-radius: var(--radius-avatars);
-          background-color: var(--color-apricot-wash);
+          background: linear-gradient(135deg, var(--color-apricot-wash), #fff);
           color: var(--color-rust);
-          margin: 0 auto 16px;
+          margin: 0 auto 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 12px rgba(93, 42, 26, 0.1);
         }
         .auth-header h1 {
-          font-size: 28px;
-          margin-bottom: 6px;
+          font-size: 26px;
+          margin-bottom: 8px;
+          color: var(--color-ink);
         }
         .auth-header .subtitle {
           font-size: 14px;
           color: var(--color-ash);
+          line-height: 1.5;
+          max-width: 320px;
+          margin: 0 auto;
         }
         .auth-error {
           background-color: #fef2f2;
           color: #ef4444;
-          padding: 12px;
+          padding: 12px 16px;
           border-radius: 12px;
           margin-bottom: 20px;
           font-size: 13px;
           font-weight: 500;
           gap: 8px;
           justify-content: flex-start;
+          border: 1px solid rgba(239, 68, 68, 0.1);
         }
         .auth-form {
           display: flex;
@@ -203,6 +218,10 @@ function Auth({ onLoginSuccess }) {
           transform: translateY(-50%);
           color: var(--color-graphite);
           pointer-events: none;
+          transition: color 0.2s ease;
+        }
+        .input-with-icon:focus-within .input-icon {
+          color: var(--color-ink);
         }
         .input-with-icon .form-input {
           padding-left: 44px;
@@ -212,16 +231,19 @@ function Auth({ onLoginSuccess }) {
           width: 100%;
         }
         .auth-footer {
-          margin-top: 24px;
+          margin-top: 28px;
           font-size: 14px;
           color: var(--color-ash);
+          text-align: center;
         }
         .auth-footer a {
           color: var(--color-rust);
           text-decoration: none;
           font-weight: 600;
+          transition: color 0.2s ease;
         }
         .auth-footer a:hover {
+          color: var(--color-rust-light);
           text-decoration: underline;
         }
       `}</style>

@@ -2,6 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, User, Shield, Menu, X } from 'lucide-react';
 
+// Add scroll listener
+useEffect(() => {
+  const handleScroll = () => {
+    const nav = document.querySelector('.navbar');
+    if (nav) {
+      nav.classList.toggle('scrolled', window.scrollY > 8);
+    }
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
+
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,6 +39,17 @@ function Navbar({ user, onLogout }) {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const nav = document.querySelector('.navbar');
+      if (nav) {
+        nav.classList.toggle('scrolled', window.scrollY > 8);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const isActive = (path) => location.pathname === path;
@@ -111,14 +134,20 @@ function Navbar({ user, onLogout }) {
       </div>
       <style>{`
         .navbar {
-          background-color: var(--color-pure-white);
-          border-bottom: 1px solid var(--color-fog);
+          background-color: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
           position: sticky;
           top: 0;
           z-index: 100;
           height: 68px;
           display: flex;
           align-items: center;
+          transition: box-shadow 0.3s ease;
+        }
+        .navbar.scrolled {
+          box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
         }
         .navbar-container {
           max-width: var(--page-max-width);
@@ -138,6 +167,10 @@ function Navbar({ user, onLogout }) {
           font-size: 20px;
           font-weight: 600;
           color: var(--color-ink);
+          transition: opacity 0.2s;
+        }
+        .navbar-logo:hover {
+          opacity: 0.8;
         }
         .logo-text {
           font-family: var(--font-sohne);
@@ -158,13 +191,28 @@ function Navbar({ user, onLogout }) {
           letter-spacing: -0.009em;
           padding: 8px 0;
           border-bottom: 2px solid transparent;
-          transition: color 0.2s ease, border-color 0.2s ease;
+          transition: color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+          position: relative;
         }
         .nav-link:hover, .nav-link.active {
           color: var(--color-ink);
         }
         .nav-link.active {
           border-bottom-color: var(--color-ink);
+        }
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background-color: var(--color-ink);
+          transition: width var(--duration-normal) var(--ease-out);
+          border-radius: 1px;
+        }
+        .nav-link:hover::after {
+          width: 100%;
         }
         .admin-link {
           display: inline-flex;
@@ -197,22 +245,31 @@ function Navbar({ user, onLogout }) {
           font-size: 13px;
           font-weight: 500;
           color: var(--color-ink);
-          border: 1px solid var(--color-dove);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          transition: box-shadow var(--duration-fast) ease, border-color var(--duration-fast) ease;
+          user-select: none;
+        }
+        .avatar:hover {
+          border-color: rgba(0, 0, 0, 0.2);
+          box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.04);
         }
         .user-dropdown {
           position: absolute;
           right: 0;
           top: 48px;
-          background: var(--color-pure-white);
-          border: 1px solid var(--color-dove);
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border: 1px solid rgba(0, 0, 0, 0.06);
           border-radius: var(--radius-inputs);
-          box-shadow: var(--shadow-subtle);
+          box-shadow: var(--shadow-lg);
           width: 240px;
           padding: 12px;
           display: flex;
           flex-direction: column;
           gap: 4px;
           z-index: 200;
+          animation: slideDown 0.2s var(--ease-out) forwards;
         }
         .dropdown-header {
           padding: 4px 8px 8px;
@@ -246,7 +303,7 @@ function Navbar({ user, onLogout }) {
         }
         .dropdown-divider {
           border: 0;
-          border-top: 1px solid var(--color-fog);
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
           margin: 6px 0;
         }
         .dropdown-item {
@@ -258,7 +315,7 @@ function Navbar({ user, onLogout }) {
           text-decoration: none;
           color: var(--color-ash);
           font-size: 14px;
-          transition: background 0.2s;
+          transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
         }
         .dropdown-item:hover {
           background: var(--surface-fog);
@@ -289,6 +346,11 @@ function Navbar({ user, onLogout }) {
           color: var(--color-ink);
           padding: 8px;
           z-index: 250;
+          border-radius: 8px;
+          transition: background-color var(--duration-fast) ease;
+        }
+        .mobile-nav-toggle:hover {
+          background-color: var(--surface-fog);
         }
 
         @media (max-width: 768px) {
@@ -305,13 +367,16 @@ function Navbar({ user, onLogout }) {
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: var(--color-pure-white);
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 24px;
             z-index: 190;
             padding: 32px;
+            animation: fadeInScale 0.3s var(--ease-out) forwards;
           }
           .navbar-links.show .nav-link {
             font-size: 20px;

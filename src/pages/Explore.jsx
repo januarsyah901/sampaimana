@@ -264,6 +264,7 @@ function Explore({ apiFetch, showToast }) {
         }
         .explore-header {
           margin-bottom: var(--spacing-32);
+          animation: fadeInUp 0.5s var(--ease-out) forwards;
         }
         .explore-header h1 {
           font-size: var(--text-heading);
@@ -282,14 +283,23 @@ function Explore({ apiFetch, showToast }) {
           display: flex;
           flex-direction: column;
           gap: 16px;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          animation: fadeInUp 0.5s var(--ease-out) 0.1s forwards;
+          opacity: 0;
         }
         .search-bar-wrapper {
           display: flex;
           align-items: center;
-          border: 1px solid var(--color-dove);
+          border: 1px solid rgba(0, 0, 0, 0.12);
           border-radius: var(--radius-inputs);
           padding: 4px 16px;
           background-color: var(--color-pure-white);
+          transition: border-color 0.2s ease, box-shadow 0.2s var(--ease-out);
+        }
+        .search-bar-wrapper:focus-within {
+          border-color: var(--color-ink);
+          box-shadow: 0 0 0 3px rgba(23, 25, 28, 0.06);
         }
         .search-icon {
           color: var(--color-graphite);
@@ -308,6 +318,16 @@ function Explore({ apiFetch, showToast }) {
           border: none;
           cursor: pointer;
           color: var(--color-graphite);
+          border-radius: 50%;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s, color 0.2s;
+        }
+        .clear-btn:hover {
+          background: var(--surface-fog);
+          color: var(--color-ink);
         }
         .filters-row {
           display: flex;
@@ -318,14 +338,20 @@ function Explore({ apiFetch, showToast }) {
         .filter-group {
           display: flex;
           align-items: center;
-          border: 1px solid var(--color-dove);
+          border: 1px solid rgba(0, 0, 0, 0.12);
           border-radius: var(--radius-buttons);
           padding: 8px 16px;
           background: var(--surface-fog);
+          transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .filter-group:focus-within {
+          border-color: var(--color-ink);
+          background: var(--color-pure-white);
         }
         .filter-icon {
           color: var(--color-graphite);
           margin-right: 8px;
+          flex-shrink: 0;
         }
         .filter-select {
           border: none;
@@ -362,11 +388,22 @@ function Explore({ apiFetch, showToast }) {
           padding: var(--card-padding);
           display: flex;
           flex-direction: column;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: var(--shadow-sm);
+          transition: transform 0.25s var(--ease-out), box-shadow 0.3s var(--ease-out), border-color 0.2s ease;
+          animation: fadeInUp 0.4s var(--ease-out) forwards;
+          opacity: 0;
         }
+        .case-card:nth-child(1) { animation-delay: 0ms; }
+        .case-card:nth-child(2) { animation-delay: 60ms; }
+        .case-card:nth-child(3) { animation-delay: 120ms; }
+        .case-card:nth-child(4) { animation-delay: 180ms; }
+        .case-card:nth-child(5) { animation-delay: 240ms; }
+        .case-card:nth-child(6) { animation-delay: 300ms; }
         .case-card:hover {
-          transform: translateY(-4px);
-          box-shadow: rgba(4, 23, 43, 0.08) 0px 10px 30px -10px, var(--shadow-subtle);
+          transform: translateY(-6px);
+          box-shadow: var(--shadow-lg);
+          border-color: rgba(0, 0, 0, 0.06);
         }
         .case-card-header {
           display: flex;
@@ -378,6 +415,7 @@ function Explore({ apiFetch, showToast }) {
           font-size: 12px;
           font-weight: 600;
           color: var(--color-graphite);
+          font-family: var(--font-sohne);
         }
         .case-card-title {
           font-size: 18px;
@@ -385,20 +423,28 @@ function Explore({ apiFetch, showToast }) {
           color: var(--color-ink);
           margin-bottom: var(--spacing-8);
           line-height: 1.3;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .case-card-desc {
           font-size: 14px;
           color: var(--color-ash);
           margin-bottom: var(--spacing-24);
-          line-height: 1.45;
+          line-height: 1.55;
           flex: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .case-card-footer {
           display: flex;
           align-items: center;
           justify-content: space-between;
           margin-top: auto;
-          border-top: 1px solid var(--surface-fog);
+          border-top: 1px solid rgba(0, 0, 0, 0.04);
           padding-top: var(--spacing-16);
         }
         .case-card-cat {
@@ -413,28 +459,34 @@ function Explore({ apiFetch, showToast }) {
           align-items: center;
           gap: 16px;
           margin-top: var(--spacing-24);
+          animation: fadeInUp 0.3s var(--ease-out) forwards;
         }
         .btn-pagination {
           background-color: var(--color-pure-white);
-          border: 1px solid var(--color-dove);
+          border: 1px solid rgba(0, 0, 0, 0.1);
           border-radius: var(--radius-buttons);
           padding: 8px 16px;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
-          transition: background 0.2s;
+          transition: background 0.2s, box-shadow 0.2s var(--ease-out);
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
         }
         .btn-pagination:hover:not(:disabled) {
           background-color: var(--surface-fog);
+          box-shadow: var(--shadow-sm);
         }
         .btn-pagination:disabled {
-          opacity: 0.5;
+          opacity: 0.4;
           cursor: not-allowed;
         }
         .page-indicator {
           font-size: 14px;
           color: var(--color-ash);
           font-weight: 500;
+          padding: 0 12px;
         }
         @media (max-width: 1024px) {
           .cases-grid {
