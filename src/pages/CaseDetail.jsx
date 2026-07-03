@@ -147,7 +147,7 @@ function CaseDetail({ apiFetch, showToast }) {
 
         <section className="case-header-section card-shadow" style={{ padding: '32px' }}>
           <div className="skeleton skeleton-text-sm" style={{ width: '25%' }}></div>
-          <div className="skeleton skeleton-title" style={{ width: '100%', height: '36px', marginBottom: '20px' }}></div>
+          <div className="skeleton skeleton-title" style={{ width: '100%', marginBottom: '20px' }}></div>
           <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph-medium"></div>
           <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph" style={{ marginTop: '8px' }}></div>
           <div className="skeleton skeleton-text skeleton-paragraph skeleton-paragraph-short" style={{ marginTop: '8px' }}></div>
@@ -158,17 +158,17 @@ function CaseDetail({ apiFetch, showToast }) {
           <div className="timeline-container">
             <div className="timeline-item" style={{ marginTop: '24px' }}>
               <div className="timeline-marker-wrapper">
-                <div className="skeleton skeleton-avatar" style={{ width: '14px', height: '14px', borderRadius: '50%' }}></div>
-                <div className="timeline-line skeleton" style={{ height: '100px', borderRadius: '1px', marginTop: '8px', background: 'linear-gradient(180deg, #f3f4f6 0%, #f9fafb 100%)' }}></div>
+                <div className="skeleton skeleton-avatar"></div>
+                <div className="timeline-line skeleton"></div>
               </div>
-              <div className="skeleton" style={{ height: '68px', borderRadius: 'var(--radius-cards)', flex: 1, marginBottom: '24px' }}></div>
+              <div className="skeleton skeleton-card" style={{ flex: 1, marginBottom: '24px' }}></div>
             </div>
             <div className="timeline-item">
               <div className="timeline-marker-wrapper">
-                <div className="skeleton skeleton-avatar" style={{ width: '14px', height: '14px', borderRadius: '50%' }}></div>
-                <div className="timeline-line skeleton" style={{ height: '100px', borderRadius: '1px', marginTop: '8px', background: 'linear-gradient(180deg, #f3f4f6 0%, #f9fafb 100%)' }}></div>
+                <div className="skeleton skeleton-avatar"></div>
+                <div className="timeline-line skeleton"></div>
               </div>
-              <div className="skeleton" style={{ height: '68px', borderRadius: 'var(--radius-cards)', flex: 1 }}></div>
+              <div className="skeleton skeleton-card" style={{ flex: 1 }}></div>
             </div>
           </div>
         </section>

@@ -269,9 +269,9 @@ function Contributor({ user, apiFetch, showToast }) {
           
           {loading ? (
             <div className="loading-history">
-              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)', marginBottom: '16px' }}></div>
-              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)', marginBottom: '16px' }}></div>
-              <div className="skeleton" style={{ height: '160px', borderRadius: 'var(--radius-cards)' }}></div>
+              <div className="skeleton skeleton-card" style={{ marginBottom: '16px' }}></div>
+              <div className="skeleton skeleton-card" style={{ marginBottom: '16px' }}></div>
+              <div className="skeleton skeleton-card"></div>
             </div>
           ) : contributions.length === 0 ? (
             <div className="empty-history card-shadow text-center">
