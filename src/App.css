@@ -548,10 +548,9 @@
   align-items: center;
 }
 
-.recent-cases-skeleton .skeleton-header h2 {
+.recent-cases-skeleton .skeleton-header > .skeleton {
   height: 28px;
   width: 130px;
-  border-radius: 6px;
   animation: shimmer 1.8s ease-in-out infinite;
 }
 
@@ -642,10 +641,9 @@
   gap: 8px;
 }
 
-.visual-card-skeleton .skeleton-subtitle-block h3 {
+.visual-card-skeleton .skeleton-subtitle-block > .skeleton {
   height: 20px;
   width: 60%;
-  border-radius: 6px;
   animation: shimmer 1.8s ease-in-out infinite;
 }
 

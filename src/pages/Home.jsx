@@ -322,9 +322,39 @@ function Home({ apiFetch, showToast }) {
       {/* Main Grid Content (Kategori) */}
       {loading || !stats ? (
         <section className="dashboard-grid container">
+          <div className="dashboard-heading-skeleton"></div>
           <div className="grid-2-col">
-            <div className="visual-card card-shadow skeleton skeleton-card-tall"></div>
-            <div className="visual-card card-shadow skeleton skeleton-card-tall"></div>
+            <div className="visual-card-skeleton">
+              <div className="skeleton-subtitle-block">
+                <div className="skeleton"></div>
+                <div className="sub skeleton"></div>
+              </div>
+              <div className="skeleton-chart-area"></div>
+            </div>
+            <div className="visual-card-skeleton">
+              <div className="skeleton-subtitle-block">
+                <div className="skeleton"></div>
+                <div className="sub skeleton"></div>
+              </div>
+              <div className="skeleton-list">
+                <div className="skeleton-list-item">
+                  <div className="item-name skeleton"></div>
+                  <div className="item-badge skeleton"></div>
+                </div>
+                <div className="skeleton-list-item">
+                  <div className="item-name skeleton"></div>
+                  <div className="item-badge skeleton"></div>
+                </div>
+                <div className="skeleton-list-item">
+                  <div className="item-name skeleton"></div>
+                  <div className="item-badge skeleton"></div>
+                </div>
+                <div className="skeleton-list-item">
+                  <div className="item-name skeleton"></div>
+                  <div className="item-badge skeleton"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       ) : (
@@ -360,9 +390,12 @@ function Home({ apiFetch, showToast }) {
       <section className="stats-section container" style={{ marginTop: '40px', marginBottom: '80px' }}>
         {loading || !stats ? (
           <div className="stats-grid">
-            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
-            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
-            <div className="stat-card card-shadow skeleton skeleton-card" style={{ borderRadius: 'var(--radius-cards)' }}></div>
+            {[1, 2, 3].map(i => (
+              <div className="stat-card-skeleton" key={i}>
+                <div className="skeleton-stat-value"></div>
+                <div className="skeleton-stat-label"></div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="stats-grid">
