@@ -234,7 +234,7 @@ function Home({ apiFetch, showToast }) {
       {/* Recent Cases Section — right below hero */}
       <section className="recent-cases-section container">
         {loading || !stats ? (
-          <div className="skeleton skeleton-card-full" style={{ height: '240px' }}></div>
+          <div className="skeleton skeleton-card-full"></div>
         ) : (
           <>
             <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>
@@ -306,8 +306,8 @@ function Home({ apiFetch, showToast }) {
       {loading || !stats ? (
         <section className="dashboard-grid container">
           <div className="grid-2-col">
-            <div className="visual-card card-shadow skeleton skeleton-card-full" style={{ height: '280px' }}></div>
-            <div className="visual-card card-shadow skeleton skeleton-card-full" style={{ height: '280px' }}></div>
+            <div className="visual-card card-shadow skeleton skeleton-card-tall"></div>
+            <div className="visual-card card-shadow skeleton skeleton-card-tall"></div>
           </div>
         </section>
       ) : (
