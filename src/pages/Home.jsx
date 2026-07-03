@@ -234,7 +234,24 @@ function Home({ apiFetch, showToast }) {
       {/* Recent Cases Section — right below hero */}
       <section className="recent-cases-section container">
         {loading || !stats ? (
-          <div className="skeleton skeleton-card-full"></div>
+          <div className="recent-cases-skeleton">
+            <div className="skeleton-header">
+              <div className="skeleton"></div>
+              <div className="btn-skeleton skeleton"></div>
+            </div>
+            <div className="skeleton-table">
+              {[1, 2, 3].map(i => (
+                <div className="skeleton-row" key={i}>
+                  <div className="col-number skeleton"></div>
+                  <div className="col-title skeleton col-title-sm"></div>
+                  <div className="col-tag skeleton"></div>
+                  <div className="col-status skeleton"></div>
+                  <div className="col-date skeleton"></div>
+                  <div className="col-btn skeleton"></div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           <>
             <div className="section-header animate-fade-in-up" style={{ marginBottom: '20px' }}>

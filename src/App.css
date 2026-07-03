@@ -535,6 +535,198 @@
   margin: 0;
 }
 
+/* Recent Cases Skeleton — matches actual content (header + table rows) */
+.recent-cases-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recent-cases-skeleton .skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recent-cases-skeleton .skeleton-header h2 {
+  height: 28px;
+  width: 130px;
+  border-radius: 6px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.recent-cases-skeleton .skeleton-header .btn-skeleton {
+  height: 32px;
+  width: 90px;
+  border-radius: 9999px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.recent-cases-skeleton .skeleton-table {
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.recent-cases-skeleton .skeleton-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.recent-cases-skeleton .skeleton-row > * {
+  border-radius: 6px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.recent-cases-skeleton .skeleton-row .col-number {
+  width: 80px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.recent-cases-skeleton .skeleton-row .col-title {
+  height: 14px;
+  flex: 2;
+}
+
+.recent-cases-skeleton .skeleton-row .col-title-sm {
+  width: 65%;
+  height: 14px;
+}
+
+.recent-cases-skeleton .skeleton-row .col-tag {
+  height: 24px;
+  width: 72px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.recent-cases-skeleton .skeleton-row .col-status {
+  height: 22px;
+  width: 80px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.recent-cases-skeleton .skeleton-row .col-date {
+  height: 12px;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.recent-cases-skeleton .skeleton-row .col-btn {
+  height: 28px;
+  width: 52px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* Visual Card Skeleton — matches actual content (heading + chart/category list) */
+.visual-card-skeleton {
+  background: var(--surface-fog);
+  border-radius: var(--radius-cards);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visual-card-skeleton .skeleton-subtitle-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visual-card-skeleton .skeleton-subtitle-block h3 {
+  height: 20px;
+  width: 60%;
+  border-radius: 6px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.visual-card-skeleton .skeleton-subtitle-block .sub {
+  height: 12px;
+  width: 75%;
+  border-radius: 4px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.visual-card-skeleton .skeleton-chart-area {
+  height: 120px;
+  border-radius: 12px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.visual-card-skeleton .skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visual-card-skeleton .skeleton-list-item {
+  height: 36px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.visual-card-skeleton .skeleton-list-item .item-name {
+  height: 14px;
+  width: 55%;
+  border-radius: 4px;
+}
+
+.visual-card-skeleton .skeleton-list-item .item-badge {
+  height: 20px;
+  width: 50px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+
+/* Stats Card Skeleton — matches actual content (value + label) */
+.stat-card-skeleton {
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card-skeleton .skeleton-stat-value {
+  height: 38px;
+  width: 70px;
+  border-radius: 8px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.stat-card-skeleton .skeleton-stat-label {
+  height: 12px;
+  width: 65%;
+  border-radius: 6px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Dashboard heading skeleton */
+.dashboard-heading-skeleton {
+  height: 28px;
+  width: 160px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
 /* Global Grid Layouts */
 .grid-2-col {
   display: grid;
